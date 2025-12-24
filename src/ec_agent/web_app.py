@@ -408,8 +408,12 @@ INDEX_HTML = textwrap.dedent(
                 <div class="raw-output">
                   <h3>Raw output</h3>
                   <div class="actions">
-                    <button class="secondary" id="download-json" type="button">Download JSON</button>
-                    <button class="secondary" id="download-yaml" type="button">Download YAML</button>
+                    <button class="secondary" id="download-json" type="button">
+                      Download JSON
+                    </button>
+                    <button class="secondary" id="download-yaml" type="button">
+                      Download YAML
+                    </button>
                   </div>
                   <div class="field">
                     <label for="raw-json">JSON</label>
