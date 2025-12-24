@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict
 import yaml
+from pydantic import BaseModel, ConfigDict
 
 
 class ProjectContext(BaseModel):

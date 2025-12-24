@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict
-
 
 def format_citation(doc_id: str, page: int | None = None, excerpt: str | None = None) -> str:
     if doc_id is None:

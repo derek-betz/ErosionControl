@@ -5,8 +5,8 @@ from typing import Optional
 
 import typer
 
-from .loader import MANIFEST_NAME, validate_resources
 from .indexer import build_index
+from .loader import MANIFEST_NAME, load_manifest, validate_resources
 from .pay_items import load_pay_item_mapping, pay_items_for_practices
 from .report import generate_report
 from .retriever import load_index, retrieve
@@ -54,6 +54,14 @@ def run_cmd(
     context = ProjectContext.from_yaml(input)
     clarifying = context.clarifying_questions()
 
+    errs = validate_resources(resources)
+    if errs:
+        for err in errs:
+            typer.echo(f"ERROR: {err}")
+        raise typer.Exit(code=1)
+    manifest = load_manifest(resources / MANIFEST_NAME)
+    manifest_doc_ids = {d["doc_id"] for d in manifest}
+
     # load rules and apply
     rules = load_rules(Path("rules/indot/practice_rules.yaml"))
     recs = generate_recommendations(context.model_dump(), rules)
@@ -74,18 +82,32 @@ def run_cmd(
             query = rec.get("title") or " ".join(rec.get("recommendations", []))
             citations = retrieve(query, idx, top_k=1)
             if citations:
-                rec["source"] = {
-                    "doc_id": citations[0].doc_id,
-                    "page": citations[0].page,
-                    "section": citations[0].excerpt[:40],
-                }
+                doc_id = citations[0].doc_id
+                if allow_non_indot or doc_id.startswith("INDOT"):
+                    rec["source"] = {
+                        "doc_id": doc_id,
+                        "page": citations[0].page,
+                        "section": citations[0].excerpt[:40],
+                    }
+                else:
+                    rec["source"] = {"doc_id": "No INDOT citation available (placeholder)"}
             else:
                 rec.setdefault("source", {"doc_id": "No INDOT citation available (placeholder)"})
     else:
         for rec in recs:
             rec.setdefault("source", {"doc_id": "No INDOT citation available (placeholder)"})
 
-    report = generate_report(context, recs, pay_items, clarifying)
+    referenced_docs = {r.get("source", {}).get("doc_id") for r in recs if r.get("source")}
+    referenced_docs.update(
+        item.get("source_doc_id") for item in pay_items if item.get("source_doc_id")
+    )
+    missing_resources = sorted(
+        doc
+        for doc in referenced_docs
+        if doc and doc not in manifest_doc_ids and doc.startswith("INDOT")
+    )
+
+    report = generate_report(context, recs, pay_items, clarifying, missing_resources)
     output.write_text(report)
     typer.echo(f"Report written to {output}")
 

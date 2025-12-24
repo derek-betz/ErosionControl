@@ -6,7 +6,7 @@ from typing import Dict, List
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from .loader import load_manifest, load_document_text, MANIFEST_NAME
+from .loader import MANIFEST_NAME, load_document_text, load_manifest
 
 
 def chunk_text(text: str, size: int = 400) -> List[str]:

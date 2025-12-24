@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from .citations import format_citation
 from .schemas import ProjectContext
@@ -31,6 +31,7 @@ def generate_report(
     recs: List[Dict],
     pay_items: List[Dict],
     clarifying_questions: List[str],
+    missing_resources: Optional[List[str]] = None,
 ) -> str:
     temp_recs = []
     perm_recs = []
@@ -83,4 +84,11 @@ def generate_report(
 
     report_lines.append("## Risks and notes")
     report_lines.append("- VERIFY WITH INDOT SOURCE for thresholds and pay item numbers where flagged.")
+
+    report_lines.append("## Needs INDOT resource")
+    if missing_resources:
+        for doc in missing_resources:
+            report_lines.append(f"- Missing INDOT resource: {doc}")
+    else:
+        report_lines.append("- All referenced INDOT resources present in manifest.")
     return "\n".join(report_lines)
