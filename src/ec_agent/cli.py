@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 import yaml
@@ -48,7 +48,7 @@ def save_output(output: ProjectOutput, output_path: Path) -> None:
         output: ProjectOutput model
         output_path: Path to output file
     """
-    output_dict = output.model_dump()
+    output_dict = output.model_dump(mode="json")
 
     with open(output_path, "w") as f:
         if output_path.suffix in [".yaml", ".yml"]:
@@ -161,15 +161,17 @@ def process(
         ),
     ],
     output_file: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--output",
             "-o",
-            help="Path to save output file (YAML or JSON). If not provided, only prints to console.",
+            help=(
+                "Path to save output file (YAML or JSON). If not provided, only prints to console."
+            ),
         ),
     ] = None,
     rules_file: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--rules",
             "-r",
@@ -182,7 +184,7 @@ def process(
         typer.Option("--llm/--no-llm", help="Enable LLM-enhanced recommendations"),
     ] = False,
     llm_api_key: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--llm-api-key", help="OpenAI API key (or set OPENAI_API_KEY env var)"),
     ] = None,
     quiet: Annotated[
@@ -225,7 +227,8 @@ def process(
                 output = adapter.enhance_recommendations(project, output)
             except ImportError:
                 console.print(
-                    "[yellow]Warning: OpenAI package not installed. Using mock LLM adapter.[/yellow]"
+                    "[yellow]Warning: OpenAI package not installed. "
+                    "Using mock LLM adapter.[/yellow]"
                 )
                 adapter = MockLLMAdapter()
                 output = adapter.enhance_recommendations(project, output)
@@ -242,7 +245,7 @@ def process(
 
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from e
 
 
 @app.command()
@@ -250,7 +253,7 @@ def validate(
     input_file: Annotated[
         Path,
         typer.Argument(help="Path to project input file to validate", exists=True, dir_okay=False),
-    ]
+    ],
 ) -> None:
     """Validate a project input file.
 
@@ -269,7 +272,7 @@ def validate(
         console.print(f"Project Phases: {len(project.phases)}")
     except Exception as e:
         console.print(f"[red]✗ Validation failed: {e}[/red]")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from e
 
 
 @app.command()

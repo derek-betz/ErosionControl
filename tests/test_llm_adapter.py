@@ -1,7 +1,5 @@
 """Tests for LLM adapter."""
 
-import pytest
-
 from ec_agent.llm_adapter import MockLLMAdapter
 from ec_agent.models import ProjectInput, SlopeType, SoilType
 from ec_agent.rules_engine import RulesEngine
@@ -40,9 +38,7 @@ def test_mock_llm_explain_practice():
     """Test mock LLM practice explanation."""
     adapter = MockLLMAdapter()
 
-    explanation = adapter.explain_practice(
-        "silt_fence", {"project": "Test", "soil": "clay"}
-    )
+    explanation = adapter.explain_practice("silt_fence", {"project": "Test", "soil": "clay"})
 
     assert "silt_fence" in explanation
     assert "Mock explanation" in explanation

@@ -99,11 +99,7 @@ def test_project_input_with_features():
                 id="INLET-1", type="inlet", location="Station 1", drainage_area_acres=2.0
             )
         ],
-        phases=[
-            ProjectPhase(
-                phase_id="P1", name="Phase 1", duration_days=20, disturbed_acres=5.0
-            )
-        ],
+        phases=[ProjectPhase(phase_id="P1", name="Phase 1", duration_days=20, disturbed_acres=5.0)],
     )
     assert len(project.drainage_features) == 1
     assert len(project.phases) == 1

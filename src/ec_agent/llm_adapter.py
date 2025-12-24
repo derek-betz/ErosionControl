@@ -56,10 +56,10 @@ class OpenAIAdapter(LLMAdapter):
             if api_key:
                 openai.api_key = api_key
             self.client = openai.OpenAI(api_key=api_key)
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "openai package not installed. Install with: pip install ec-agent[llm]"
-            )
+            ) from e
 
     def enhance_recommendations(
         self, project: ProjectInput, base_output: ProjectOutput
@@ -146,9 +146,7 @@ Provide:
         except Exception as e:
             return f"Error generating explanation: {str(e)}"
 
-    def _create_enhancement_prompt(
-        self, project: ProjectInput, base_output: ProjectOutput
-    ) -> str:
+    def _create_enhancement_prompt(self, project: ProjectInput, base_output: ProjectOutput) -> str:
         """Create a prompt for LLM enhancement.
 
         Args:
@@ -205,8 +203,9 @@ class MockLLMAdapter(LLMAdapter):
         enhanced_output = base_output.model_copy(deep=True)
         enhanced_output.summary["llm_insights"] = (
             "Mock LLM Insights: The recommended practices appear appropriate for "
-            f"a {project.total_disturbed_acres}-acre project with {project.predominant_slope.value} "
-            "slopes. Consider implementing practices in phases to minimize cost and maximize effectiveness."
+            f"a {project.total_disturbed_acres}-acre project with "
+            f"{project.predominant_slope.value} slopes. Consider implementing practices "
+            "in phases to minimize cost and maximize effectiveness."
         )
         return enhanced_output
 

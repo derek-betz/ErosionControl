@@ -1,7 +1,6 @@
 """Integration tests for the complete EC Agent workflow."""
 
 import json
-from pathlib import Path
 
 import pytest
 import yaml
@@ -119,7 +118,7 @@ def test_yaml_serialization(sample_project, tmp_path):
 
     # Save to YAML
     yaml_path = tmp_path / "output.yaml"
-    output_dict = output.model_dump()
+    output_dict = output.model_dump(mode="json")
     with open(yaml_path, "w") as f:
         yaml.safe_dump(output_dict, f)
 
@@ -139,7 +138,7 @@ def test_json_serialization(sample_project, tmp_path):
 
     # Save to JSON
     json_path = tmp_path / "output.json"
-    output_dict = output.model_dump()
+    output_dict = output.model_dump(mode="json")
     with open(json_path, "w") as f:
         json.dump(output_dict, f, indent=2)
 
@@ -227,7 +226,11 @@ def test_traceability_of_rules(sample_project):
     # Verify all rule sources are present
     for practice in output.temporary_practices + output.permanent_practices:
         assert len(practice.rule_source) > 0
-        assert practice.rule_source in ["EPA NPDES CGP", "Local Stormwater Ordinance", "State DOT Standard Specifications"]
+        assert practice.rule_source in [
+            "EPA NPDES CGP",
+            "Local Stormwater Ordinance",
+            "State DOT Standard Specifications",
+        ]
 
 
 def test_cost_estimation(sample_project):

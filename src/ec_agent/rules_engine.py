@@ -48,7 +48,9 @@ class Rule(BaseModel):
 
     id: str = Field(..., description="Unique rule identifier")
     name: str = Field(..., description="Human-readable rule name")
-    source: str = Field(..., description="Source document/standard (e.g., 'EPA NPDES', 'State DOT')")
+    source: str = Field(
+        ..., description="Source document/standard (e.g., 'EPA NPDES', 'State DOT')"
+    )
     priority: int = Field(default=100, description="Priority (lower number = higher priority)")
     conditions: list[RuleCondition] = Field(..., description="Conditions that trigger this rule")
     action: RuleAction = Field(..., description="Action to perform when conditions are met")
@@ -92,7 +94,9 @@ class RulesEngine:
                     "name": "Silt Fence for Perimeter",
                     "source": "EPA NPDES CGP",
                     "priority": 10,
-                    "conditions": [{"field": "total_disturbed_acres", "operator": "gt", "value": 0}],
+                    "conditions": [
+                        {"field": "total_disturbed_acres", "operator": "gt", "value": 0}
+                    ],
                     "action": {
                         "practice_type": "silt_fence",
                         "is_temporary": True,
@@ -110,7 +114,9 @@ class RulesEngine:
                     "name": "Inlet Protection",
                     "source": "Local Stormwater Ordinance",
                     "priority": 20,
-                    "conditions": [{"field": "has_drainage_features", "operator": "eq", "value": True}],
+                    "conditions": [
+                        {"field": "has_drainage_features", "operator": "eq", "value": True}
+                    ],
                     "action": {
                         "practice_type": "inlet_protection",
                         "is_temporary": True,
@@ -129,7 +135,11 @@ class RulesEngine:
                     "source": "State DOT Standard Specifications",
                     "priority": 30,
                     "conditions": [
-                        {"field": "predominant_slope", "operator": "in", "value": ["steep", "very_steep"]}
+                        {
+                            "field": "predominant_slope",
+                            "operator": "in",
+                            "value": ["steep", "very_steep"],
+                        }
                     ],
                     "action": {
                         "practice_type": "erosion_control_blanket",
@@ -148,7 +158,9 @@ class RulesEngine:
                     "name": "Construction Entrance",
                     "source": "EPA NPDES CGP",
                     "priority": 40,
-                    "conditions": [{"field": "total_disturbed_acres", "operator": "gte", "value": 1.0}],
+                    "conditions": [
+                        {"field": "total_disturbed_acres", "operator": "gte", "value": 1.0}
+                    ],
                     "action": {
                         "practice_type": "construction_entrance",
                         "is_temporary": True,
@@ -166,14 +178,18 @@ class RulesEngine:
                     "name": "Permanent Seeding",
                     "source": "State DOT Standard Specifications",
                     "priority": 50,
-                    "conditions": [{"field": "total_disturbed_acres", "operator": "gt", "value": 0}],
+                    "conditions": [
+                        {"field": "total_disturbed_acres", "operator": "gt", "value": 0}
+                    ],
                     "action": {
                         "practice_type": "permanent_seeding",
                         "is_temporary": False,
                         "quantity_formula": "total_disturbed_acres",
                         "unit": "AC",
                         "location_template": "All disturbed areas",
-                        "justification": "Permanent vegetation establishment for final stabilization",
+                        "justification": (
+                            "Permanent vegetation establishment for final stabilization"
+                        ),
                         "pay_item_number": "EC-010",
                         "pay_item_description": "Permanent Seeding Mix",
                         "estimated_unit_cost": 500.00,

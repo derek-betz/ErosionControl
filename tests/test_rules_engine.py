@@ -1,9 +1,5 @@
 """Tests for rules engine."""
 
-from pathlib import Path
-
-import pytest
-
 from ec_agent.models import ProjectInput, SlopeType, SoilType
 from ec_agent.rules_engine import Rule, RuleAction, RuleCondition, RulesEngine
 
