@@ -53,12 +53,8 @@ class DesktopApp:
         ttk.Button(toolbar, text="Run Analysis", command=self.run_analysis).pack(
             side="left", padx=4
         )
-        ttk.Button(toolbar, text="Save JSON", command=self.save_json).pack(
-            side="left", padx=4
-        )
-        ttk.Button(toolbar, text="Save YAML", command=self.save_yaml).pack(
-            side="left", padx=4
-        )
+        ttk.Button(toolbar, text="Save JSON", command=self.save_json).pack(side="left", padx=4)
+        ttk.Button(toolbar, text="Save YAML", command=self.save_yaml).pack(side="left", padx=4)
         ttk.Button(toolbar, text="Clear", command=self.clear_all).pack(side="left", padx=4)
 
         options = ttk.Frame(self.root, padding=(8, 0, 8, 8))
