@@ -11,7 +11,13 @@ from typing import Any
 
 import yaml
 
-from ec_agent.io_utils import parse_project_text, parse_rules_text, resolve_api_key
+from ec_agent.io_utils import (
+    build_attachment_summary,
+    decode_base64_attachment,
+    parse_project_text,
+    parse_rules_text,
+    resolve_api_key,
+)
 from ec_agent.llm_adapter import MockLLMAdapter, OpenAIAdapter
 from ec_agent.rules_engine import RulesEngine
 
@@ -155,6 +161,53 @@ INDEX_HTML = textwrap.dedent(
 
           .field {
             margin-bottom: 16px;
+          }
+
+          .drop-zone {
+            border: 2px dashed var(--line);
+            border-radius: 18px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.72);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+          }
+
+          .drop-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(214, 122, 74, 0.15);
+            transform: translateY(-1px);
+          }
+
+          .drop-zone input {
+            display: none;
+          }
+
+          .drop-zone .file-hint {
+            font-size: 0.85rem;
+            color: #5b776a;
+          }
+
+          .drop-zone .file-name {
+            font-size: 0.85rem;
+            color: var(--pine);
+          }
+
+          .inline-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          }
+
+          .inline-check label {
+            margin: 0;
+          }
+
+          .inline-check input {
+            width: auto;
+            margin: 0;
           }
 
           .row {
@@ -369,6 +422,28 @@ INDEX_HTML = textwrap.dedent(
                   <label for="rules-text">Custom rules YAML (optional)</label>
                   <textarea id="rules-text" placeholder="Paste custom rules YAML here"></textarea>
                 </div>
+                <div class="field">
+                  <label for="ec-quantities-file">EC quantities spreadsheet</label>
+                  <div class="drop-zone" id="ec-quantities-drop">
+                    <input id="ec-quantities-file" type="file" accept=".xlsx">
+                    <strong>Drop *_ec_quantities.xlsx here</strong>
+                    <span class="file-hint">or click to browse</span>
+                    <span class="file-name" id="ec-quantities-name">No file selected.</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="plan-set-file">Plan set PDF</label>
+                  <div class="drop-zone" id="plan-set-drop">
+                    <input id="plan-set-file" type="file" accept=".pdf">
+                    <strong>Drop the plan set PDF here</strong>
+                    <span class="file-hint">or click to browse</span>
+                    <span class="file-name" id="plan-set-name">No file selected.</span>
+                  </div>
+                </div>
+                <div class="field inline-check">
+                  <input id="plan-set-has-ec" type="checkbox">
+                  <label for="plan-set-has-ec">Plan set includes erosion control plans</label>
+                </div>
                 <div class="row">
                   <div class="field">
                     <label for="llm-toggle">LLM enhancement</label>
@@ -490,6 +565,13 @@ INDEX_HTML = textwrap.dedent(
           const projectFormat = document.getElementById("project-format");
           const rulesFileInput = document.getElementById("rules-file");
           const rulesText = document.getElementById("rules-text");
+          const ecQuantitiesDrop = document.getElementById("ec-quantities-drop");
+          const ecQuantitiesInput = document.getElementById("ec-quantities-file");
+          const ecQuantitiesName = document.getElementById("ec-quantities-name");
+          const planSetDrop = document.getElementById("plan-set-drop");
+          const planSetInput = document.getElementById("plan-set-file");
+          const planSetName = document.getElementById("plan-set-name");
+          const planSetHasEc = document.getElementById("plan-set-has-ec");
           const llmToggle = document.getElementById("llm-toggle");
           const llmKey = document.getElementById("llm-key");
           const statusEl = document.getElementById("status");
@@ -508,6 +590,8 @@ INDEX_HTML = textwrap.dedent(
 
           let lastOutput = null;
           let lastOutputYaml = "";
+          let ecQuantitiesFile = null;
+          let planSetFile = null;
 
           function setStatus(message, kind) {
             statusEl.textContent = message || "";
@@ -540,6 +624,74 @@ INDEX_HTML = textwrap.dedent(
               reader.onload = () => resolve(reader.result || "");
               reader.onerror = () => reject(reader.error);
               reader.readAsText(file);
+            });
+          }
+
+          async function readFileAsBase64(file) {
+            if (!file) {
+              return "";
+            }
+            return new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                const result = String(reader.result || "");
+                const base64 = result.split(",")[1] || "";
+                resolve(base64);
+              };
+              reader.onerror = () => reject(reader.error);
+              reader.readAsDataURL(file);
+            });
+          }
+
+          function formatFileSize(bytes) {
+            if (!bytes && bytes !== 0) {
+              return "";
+            }
+            if (bytes < 1024) {
+              return `${bytes} B`;
+            }
+            if (bytes < 1024 * 1024) {
+              return `${(bytes / 1024).toFixed(1)} KB`;
+            }
+            return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+          }
+
+          function updateFileLabel(labelEl, file) {
+            if (!labelEl) {
+              return;
+            }
+            if (!file) {
+              labelEl.textContent = "No file selected.";
+              return;
+            }
+            const size = formatFileSize(file.size);
+            labelEl.textContent = size ? `${file.name} (${size})` : file.name;
+          }
+
+          function setupDropZone(zone, input, labelEl, onFile) {
+            if (!zone || !input) {
+              return;
+            }
+            zone.addEventListener("click", () => input.click());
+            zone.addEventListener("dragover", (event) => {
+              event.preventDefault();
+              zone.classList.add("dragover");
+            });
+            zone.addEventListener("dragleave", () => {
+              zone.classList.remove("dragover");
+            });
+            zone.addEventListener("drop", (event) => {
+              event.preventDefault();
+              zone.classList.remove("dragover");
+              const file = event.dataTransfer.files[0] || null;
+              onFile(file);
+              updateFileLabel(labelEl, file);
+              input.value = "";
+            });
+            input.addEventListener("change", () => {
+              const file = input.files[0] || null;
+              onFile(file);
+              updateFileLabel(labelEl, file);
             });
           }
 
@@ -665,6 +817,28 @@ INDEX_HTML = textwrap.dedent(
             URL.revokeObjectURL(url);
           }
 
+          async function buildFilePayload(file) {
+            if (!file) {
+              return null;
+            }
+            const base64 = await readFileAsBase64(file);
+            return {
+              name: file.name,
+              data: base64,
+              size: file.size,
+              type: file.type,
+            };
+          }
+
+          setupDropZone(ecQuantitiesDrop, ecQuantitiesInput, ecQuantitiesName, (file) => {
+            ecQuantitiesFile = file;
+          });
+          setupDropZone(planSetDrop, planSetInput, planSetName, (file) => {
+            planSetFile = file;
+          });
+          updateFileLabel(ecQuantitiesName, null);
+          updateFileLabel(planSetName, null);
+
           document.getElementById("load-example").addEventListener("click", () => {
             projectText.value = SAMPLE_PROJECT;
             projectFormat.value = "yaml";
@@ -676,6 +850,13 @@ INDEX_HTML = textwrap.dedent(
             rulesText.value = "";
             projectFileInput.value = "";
             rulesFileInput.value = "";
+            ecQuantitiesInput.value = "";
+            planSetInput.value = "";
+            ecQuantitiesFile = null;
+            planSetFile = null;
+            updateFileLabel(ecQuantitiesName, null);
+            updateFileLabel(planSetName, null);
+            planSetHasEc.checked = false;
             llmKey.value = "";
             llmToggle.value = "false";
             setStatus("", "");
@@ -717,6 +898,10 @@ INDEX_HTML = textwrap.dedent(
             };
 
             try {
+              payload.ec_quantities_file = await buildFilePayload(ecQuantitiesFile);
+              payload.plan_set_pdf = await buildFilePayload(planSetFile);
+              payload.plan_set_includes_ec_plans = planSetHasEc.checked;
+
               const response = await fetch("/api/process", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -839,8 +1024,18 @@ def process_request(payload: dict[str, Any]) -> tuple[dict[str, Any], str]:
     rules_text = payload.get("rules_text", "")
     use_llm = bool(payload.get("use_llm"))
     llm_api_key = payload.get("llm_api_key") or None
+    ec_quantities = decode_base64_attachment(payload.get("ec_quantities_file"))
+    plan_set_pdf = decode_base64_attachment(payload.get("plan_set_pdf"))
+    plan_set_includes_ec_plans = payload.get("plan_set_includes_ec_plans")
+    if plan_set_includes_ec_plans is not None:
+        plan_set_includes_ec_plans = bool(plan_set_includes_ec_plans)
 
     project = parse_project_text(project_text, project_format)
+    attachment_summary = build_attachment_summary(
+        ec_quantities, plan_set_pdf, plan_set_includes_ec_plans
+    )
+    if attachment_summary:
+        project.metadata.setdefault("attachments", {}).update(attachment_summary)
 
     engine = RulesEngine()
     custom_rules = parse_rules_text(rules_text)
@@ -866,6 +1061,9 @@ def process_request(payload: dict[str, Any]) -> tuple[dict[str, Any], str]:
 
         if llm_notice:
             output.summary["llm_notice"] = llm_notice
+
+    if attachment_summary:
+        output.summary.update(attachment_summary)
 
     output_dict = output.model_dump(mode="json")
     output_yaml = yaml.safe_dump(output_dict, default_flow_style=False, sort_keys=False)

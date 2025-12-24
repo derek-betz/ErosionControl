@@ -1,5 +1,6 @@
 """Optional LLM adapter for enhanced EC recommendations."""
 
+import json
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -162,6 +163,10 @@ Provide:
                 for p in base_output.temporary_practices + base_output.permanent_practices
             ]
         )
+        attachments = project.metadata.get("attachments") if project.metadata else None
+        attachments_text = ""
+        if attachments:
+            attachments_text = f"\nAttachment context:\n{json.dumps(attachments, indent=2)}"
 
         return f"""Review these erosion control recommendations for a roadway project:
 
@@ -171,6 +176,7 @@ Total Disturbed Acres: {project.total_disturbed_acres}
 Predominant Soil: {project.predominant_soil.value}
 Predominant Slope: {project.predominant_slope.value}
 Average Slope: {project.average_slope_percent}%
+{attachments_text}
 
 Recommended Practices:
 {practices_summary}

@@ -9,7 +9,12 @@ from tkinter import filedialog, messagebox, ttk
 
 import yaml
 
-from ec_agent.io_utils import parse_project_text, parse_rules_text, resolve_api_key
+from ec_agent.io_utils import (
+    build_attachment_summary,
+    parse_project_text,
+    parse_rules_text,
+    resolve_api_key,
+)
 from ec_agent.llm_adapter import MockLLMAdapter, OpenAIAdapter
 from ec_agent.rules_engine import RulesEngine
 
@@ -34,6 +39,15 @@ class DesktopApp:
         self.api_key_var = tk.StringVar(value="")
         self.summary_var = tk.StringVar(value="Run analysis to see summary.")
         self.status_var = tk.StringVar(value="")
+        self.plan_set_has_ec_plans = tk.BooleanVar(value=False)
+        self.ec_quantities_label_var = tk.StringVar(value="No EC quantities file loaded.")
+        self.plan_set_label_var = tk.StringVar(value="No plan set PDF loaded.")
+        self.ec_quantities_name: str | None = None
+        self.ec_quantities_data: bytes | None = None
+        self.plan_set_name: str | None = None
+        self.plan_set_data: bytes | None = None
+        self.ec_quantities_summary: dict[str, object] | None = None
+        self.plan_set_summary: dict[str, object] | None = None
 
         self._palette = self._build_palette()
         self._configure_styles()
@@ -260,6 +274,8 @@ class DesktopApp:
         left_col.grid(row=0, column=0, sticky="nsew", padx=(0, 12))
         left_col.columnconfigure(0, weight=1)
         left_col.rowconfigure(0, weight=1)
+        left_col.rowconfigure(1, weight=0)
+        left_col.rowconfigure(2, weight=0)
 
         right_col = ttk.Frame(content, style="Background.TFrame")
         right_col.grid(row=0, column=1, sticky="nsew", padx=(12, 0))
@@ -307,8 +323,46 @@ class DesktopApp:
         self.project_text = self._add_text_area(project_tab, self.project_placeholder)
         self.rules_text = self._add_text_area(rules_tab, self.rules_placeholder)
 
+        context_card = ttk.Frame(left_col, style="Card.TFrame", padding=(16, 16))
+        context_card.grid(row=1, column=0, sticky="ew", pady=(16, 0))
+        context_card.columnconfigure(1, weight=1)
+
+        ttk.Label(context_card, text="Project Context Files", style="SectionHeading.TLabel").grid(
+            row=0, column=0, columnspan=2, sticky="w"
+        )
+        ttk.Button(
+            context_card,
+            text="Load EC Quantities",
+            command=self.load_ec_quantities_file,
+            style="Secondary.TButton",
+        ).grid(row=1, column=0, sticky="w", pady=(10, 0))
+        ttk.Label(
+            context_card,
+            textvariable=self.ec_quantities_label_var,
+            style="Hint.TLabel",
+        ).grid(row=1, column=1, sticky="w", padx=(12, 0), pady=(10, 0))
+
+        ttk.Button(
+            context_card,
+            text="Load Plan Set PDF",
+            command=self.load_plan_set_file,
+            style="Secondary.TButton",
+        ).grid(row=2, column=0, sticky="w", pady=(10, 0))
+        ttk.Label(
+            context_card,
+            textvariable=self.plan_set_label_var,
+            style="Hint.TLabel",
+        ).grid(row=2, column=1, sticky="w", padx=(12, 0), pady=(10, 0))
+
+        ttk.Checkbutton(
+            context_card,
+            text="Plan set includes erosion control plans",
+            variable=self.plan_set_has_ec_plans,
+            style="Toggle.TCheckbutton",
+        ).grid(row=3, column=0, columnspan=2, sticky="w", pady=(12, 0))
+
         options_card = ttk.Frame(left_col, style="Card.TFrame", padding=(16, 16))
-        options_card.grid(row=1, column=0, sticky="ew", pady=(16, 0))
+        options_card.grid(row=2, column=0, sticky="ew", pady=(16, 0))
         options_card.columnconfigure(1, weight=1)
 
         ttk.Label(options_card, text="Options", style="SectionHeading.TLabel").grid(
@@ -497,6 +551,58 @@ class DesktopApp:
         self.rules_text.insert("1.0", text)
         self._set_status("Loaded rules file.")
 
+    def load_ec_quantities_file(self) -> None:
+        path = filedialog.askopenfilename(
+            title="Open EC quantities file", filetypes=[("Excel files", "*.xlsx")]
+        )
+        if not path:
+            return
+        try:
+            data = Path(path).read_bytes()
+        except OSError as exc:
+            messagebox.showerror("Error", f"Unable to read EC quantities file: {exc}")
+            return
+        name = Path(path).name
+        self.ec_quantities_name = name
+        self.ec_quantities_data = data
+        summary = build_attachment_summary((name, data), None)
+        self.ec_quantities_summary = summary
+        label = name
+        count = summary.get("ec_quantities_sheet_count")
+        if isinstance(count, int):
+            label = f"{name} ({count} sheets)"
+        elif summary.get("ec_quantities_notice"):
+            label = f"{name} (sheets unknown)"
+        self.ec_quantities_label_var.set(label)
+        self._set_status("Loaded EC quantities file.")
+
+    def load_plan_set_file(self) -> None:
+        path = filedialog.askopenfilename(
+            title="Open plan set PDF", filetypes=[("PDF files", "*.pdf")]
+        )
+        if not path:
+            return
+        try:
+            data = Path(path).read_bytes()
+        except OSError as exc:
+            messagebox.showerror("Error", f"Unable to read plan set PDF: {exc}")
+            return
+        name = Path(path).name
+        self.plan_set_name = name
+        self.plan_set_data = data
+        summary = build_attachment_summary(
+            None, (name, data), self.plan_set_has_ec_plans.get()
+        )
+        self.plan_set_summary = summary
+        label = name
+        page_count = summary.get("plan_set_pdf_pages")
+        if isinstance(page_count, int):
+            label = f"{name} ({page_count} pages)"
+        elif summary.get("plan_set_pdf_notice"):
+            label = f"{name} (pages unknown)"
+        self.plan_set_label_var.set(label)
+        self._set_status("Loaded plan set PDF.")
+
     def load_example(self) -> None:
         example_path = Path("examples") / "highway_project.yaml"
         if not example_path.exists():
@@ -518,6 +624,15 @@ class DesktopApp:
         self.output_json = None
         self.output_yaml = None
         self.summary_var.set("Run analysis to see summary.")
+        self.ec_quantities_name = None
+        self.ec_quantities_data = None
+        self.plan_set_name = None
+        self.plan_set_data = None
+        self.ec_quantities_summary = None
+        self.plan_set_summary = None
+        self.ec_quantities_label_var.set("No EC quantities file loaded.")
+        self.plan_set_label_var.set("No plan set PDF loaded.")
+        self.plan_set_has_ec_plans.set(False)
         self._set_status("Cleared.")
 
     def run_analysis(self) -> None:
@@ -529,6 +644,9 @@ class DesktopApp:
             rules_text = ""
         try:
             project = parse_project_text(project_text, self.project_format.get())
+            attachment_summary = self._build_attachment_summary()
+            if attachment_summary:
+                project.metadata.setdefault("attachments", {}).update(attachment_summary)
             engine = RulesEngine()
             custom_rules = parse_rules_text(rules_text)
             if custom_rules:
@@ -552,6 +670,9 @@ class DesktopApp:
                 if llm_notice:
                     output.summary["llm_notice"] = llm_notice
 
+            if attachment_summary:
+                output.summary.update(attachment_summary)
+
             output_dict = output.model_dump(mode="json")
             output_json = json.dumps(output_dict, indent=2)
             output_yaml = yaml.safe_dump(output_dict, default_flow_style=False, sort_keys=False)
@@ -564,6 +685,16 @@ class DesktopApp:
                 f"Pay items: {output.summary.get('total_pay_items', 0)}",
                 f"Estimated cost: {output.summary.get('total_estimated_cost', 0)}",
             ]
+            if output.summary.get("ec_quantities_file"):
+                summary_lines.append(
+                    f"EC quantities file: {output.summary.get('ec_quantities_file')}"
+                )
+            if output.summary.get("plan_set_pdf_file"):
+                summary_lines.append(f"Plan set PDF: {output.summary.get('plan_set_pdf_file')}")
+            if output.summary.get("plan_set_includes_ec_plans") is True:
+                summary_lines.append("Plan set includes EC plans: yes")
+            if output.summary.get("plan_set_includes_ec_plans") is False:
+                summary_lines.append("Plan set includes EC plans: no")
             if output.summary.get("llm_notice"):
                 summary_lines.append(f"LLM notice: {output.summary['llm_notice']}")
             if output.summary.get("llm_error"):
@@ -574,6 +705,18 @@ class DesktopApp:
         except Exception as exc:
             messagebox.showerror("Error", str(exc))
             self._set_status("Error during analysis.")
+
+    def _build_attachment_summary(self) -> dict[str, object]:
+        ec_quantities = None
+        if self.ec_quantities_name and self.ec_quantities_data:
+            ec_quantities = (self.ec_quantities_name, self.ec_quantities_data)
+        plan_set = None
+        if self.plan_set_name and self.plan_set_data:
+            plan_set = (self.plan_set_name, self.plan_set_data)
+        summary = build_attachment_summary(
+            ec_quantities, plan_set, self.plan_set_has_ec_plans.get()
+        )
+        return summary or {}
 
     def save_json(self) -> None:
         if not self.output_json:
