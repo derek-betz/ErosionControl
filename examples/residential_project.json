@@ -1,0 +1,27 @@
+{
+  "project_name": "Residential Street Reconstruction",
+  "jurisdiction": "City of Portland, Oregon",
+  "total_disturbed_acres": 1.5,
+  "predominant_soil": "silt",
+  "predominant_slope": "gentle",
+  "average_slope_percent": 8.0,
+  "drainage_features": [
+    {
+      "id": "INLET-100",
+      "type": "inlet",
+      "location": "Main Street & Oak Avenue",
+      "drainage_area_acres": 0.8,
+      "additional_properties": {
+        "inlet_type": "catch_basin",
+        "condition": "new"
+      }
+    }
+  ],
+  "phases": [],
+  "metadata": {
+    "project_engineer": "John Doe, PE",
+    "contractor": "City Public Works",
+    "estimated_start_date": "2024-04-15",
+    "project_type": "municipal"
+  }
+}

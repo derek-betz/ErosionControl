@@ -1,0 +1,55 @@
+project_name: Highway 101 Widening Project
+jurisdiction: California Department of Transportation (Caltrans)
+total_disturbed_acres: 5.2
+predominant_soil: clay
+predominant_slope: moderate
+average_slope_percent: 18.5
+
+drainage_features:
+  - id: INLET-001
+    type: inlet
+    location: Station 10+50, North side
+    drainage_area_acres: 2.3
+    additional_properties:
+      inlet_type: curb_inlet
+      grate_size: 24x36
+  
+  - id: INLET-002
+    type: inlet
+    location: Station 15+75, South side
+    drainage_area_acres: 1.8
+    additional_properties:
+      inlet_type: curb_inlet
+      grate_size: 24x36
+  
+  - id: OUTFALL-001
+    type: outfall
+    location: Station 20+00, West side
+    drainage_area_acres: 4.1
+    additional_properties:
+      outfall_pipe_diameter: 36
+
+phases:
+  - phase_id: PHASE-1
+    name: Clearing and Grubbing
+    duration_days: 15
+    disturbed_acres: 5.2
+    description: Initial site preparation and vegetation removal
+  
+  - phase_id: PHASE-2
+    name: Grading and Excavation
+    duration_days: 45
+    disturbed_acres: 5.2
+    description: Cut and fill operations, slope shaping
+  
+  - phase_id: PHASE-3
+    name: Paving and Finishing
+    duration_days: 30
+    disturbed_acres: 3.0
+    description: Asphalt paving, final grading, and permanent EC measures
+
+metadata:
+  project_engineer: Jane Smith, PE
+  contractor: ABC Construction Inc.
+  estimated_start_date: "2024-03-01"
+  regulatory_permit: NPDES Permit CA0123456
