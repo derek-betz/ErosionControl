@@ -247,6 +247,9 @@ LLM enhancement provides:
 - Risk identification
 - Sequencing recommendations
 
+You can also set `OPENAI_API_KEY_FILE` to a key file path or place the key in
+`API_KEY/API_KEY.txt` in your working directory.
+
 ## Common Scenarios
 
 ### Scenario 1: Small Residential Project

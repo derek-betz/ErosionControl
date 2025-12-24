@@ -68,6 +68,9 @@ export OPENAI_API_KEY=your-api-key
 ec-agent process examples/highway_project.yaml --llm --output results.yaml
 ```
 
+You can also set `OPENAI_API_KEY_FILE` to a key file path or place the key in
+`API_KEY/API_KEY.txt` in your working directory.
+
 ## Project Input Format
 
 Projects can be defined in YAML or JSON. Here's a minimal example:

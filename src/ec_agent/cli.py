@@ -1,6 +1,7 @@
 """Command-line interface for EC Agent."""
 
 import json
+import os
 from pathlib import Path
 from typing import Annotated
 
@@ -19,6 +20,24 @@ app = typer.Typer(
     add_completion=False,
 )
 console = Console()
+
+
+def resolve_api_key(cli_value: str | None) -> str | None:
+    """Resolve OpenAI API key from CLI, env var, or local file."""
+    if cli_value:
+        return cli_value
+
+    env_key = os.getenv("OPENAI_API_KEY")
+    if env_key:
+        return env_key
+
+    key_file = os.getenv("OPENAI_API_KEY_FILE")
+    key_path = Path(key_file) if key_file else Path("API_KEY") / "API_KEY.txt"
+    if key_path.is_file():
+        key = key_path.read_text(encoding="utf-8").strip()
+        return key or None
+
+    return None
 
 
 def load_project(input_path: Path) -> ProjectInput:
@@ -219,10 +238,14 @@ def process(
             if not quiet:
                 console.print("[cyan]Enhancing with LLM...[/cyan]")
             try:
-                if llm_api_key or True:  # Allow env var fallback
-                    adapter = OpenAIAdapter(api_key=llm_api_key)
+                api_key = resolve_api_key(llm_api_key)
+                if api_key:
+                    adapter = OpenAIAdapter(api_key=api_key)
                 else:
-                    # Use mock adapter for testing
+                    console.print(
+                        "[yellow]Warning: OpenAI API key not found. "
+                        "Using mock LLM adapter.[/yellow]"
+                    )
                     adapter = MockLLMAdapter()
                 output = adapter.enhance_recommendations(project, output)
             except ImportError:
