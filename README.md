@@ -14,6 +14,8 @@
 - ⚙️ **YAML Rules Engine**: Deterministic, customizable rules for different jurisdictions and standards
 - 🤖 **Optional LLM Enhancement**: OpenAI integration for additional insights and explanations
 - 🖥️ **CLI Interface**: Easy-to-use command-line interface built with Typer
+- **Web UI**: Local browser-based interface for running projects without the CLI
+- **Desktop UI**: Tkinter app with file pickers for offline use
 - ✅ **Type-Safe**: Full Pydantic model validation for inputs and outputs
 - 🧪 **Well-Tested**: Comprehensive test suite with pytest
 
@@ -70,6 +72,21 @@ ec-agent process examples/highway_project.yaml --llm --output results.yaml
 
 You can also set `OPENAI_API_KEY_FILE` to a key file path or place the key in
 `API_KEY/API_KEY.txt` in your working directory.
+
+### 5. Launch the Web UI (Optional)
+
+```bash
+ec-agent web
+```
+
+Open `http://127.0.0.1:8000` in your browser.
+
+### 6. Launch the Desktop UI (Optional)
+
+```bash
+ec-agent desktop
+```
+
 
 ## Project Input Format
 
@@ -189,6 +206,22 @@ Validate a project input file.
 ec-agent validate INPUT_FILE
 ```
 
+### `web`
+
+Launch the local web UI.
+
+```bash
+ec-agent web --host 127.0.0.1 --port 8000 --open
+```
+
+### `desktop`
+
+Launch the desktop UI.
+
+```bash
+ec-agent desktop
+```
+
 ### `version`
 
 Show version information.
@@ -227,7 +260,10 @@ ErosionControl/
 │   ├── models.py          # Pydantic data models
 │   ├── rules_engine.py    # YAML rules engine
 │   ├── llm_adapter.py     # Optional LLM enhancement
-│   └── cli.py             # Typer CLI
+│   ├── cli.py             # Typer CLI
+│   ├── io_utils.py        # Shared input/output helpers
+│   ├── desktop_app.py     # Desktop UI (Tkinter)
+│   └── web_app.py         # Local web UI server
 ├── tests/
 │   ├── test_models.py
 │   ├── test_rules_engine.py

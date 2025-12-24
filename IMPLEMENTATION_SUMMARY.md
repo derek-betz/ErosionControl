@@ -50,6 +50,8 @@ Successfully created a complete Python 3.12+ GitHub repository scaffold for an "
 ### 6. CLI (Typer)
 - ✅ `ec-agent process` - Process projects
 - ✅ `ec-agent validate` - Validate input files
+- ✅ `ec-agent web` - Launch local web UI
+- ✅ `ec-agent desktop` - Launch desktop UI
 - ✅ `ec-agent version` - Show version
 - ✅ Rich console output with tables
 - ✅ Quiet mode option

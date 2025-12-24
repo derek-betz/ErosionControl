@@ -8,13 +8,27 @@ Get started with EC Agent in 5 minutes!
 pip install -e .
 ```
 
-## 2. Validate an Example
+## 2. Launch the Web UI (Optional)
+
+```bash
+ec-agent web
+```
+
+Open `http://127.0.0.1:8000` in your browser.
+
+## 3. Launch the Desktop UI (Optional)
+
+```bash
+ec-agent desktop
+```
+
+## 4. Validate an Example
 
 ```bash
 ec-agent validate examples/highway_project.yaml
 ```
 
-## 3. Process a Project
+## 5. Process a Project
 
 ```bash
 ec-agent process examples/highway_project.yaml
@@ -37,13 +51,13 @@ Generated: 2024-01-15T10:30:00
 └───────────────────────────┴────────┘
 ```
 
-## 4. Save Results
+## 6. Save Results
 
 ```bash
 ec-agent process examples/highway_project.yaml --output my_results.yaml
 ```
 
-## 5. Create Your Own Project
+## 7. Create Your Own Project
 
 Create `my_project.yaml`:
 

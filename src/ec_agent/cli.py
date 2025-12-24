@@ -1,7 +1,6 @@
 """Command-line interface for EC Agent."""
 
 import json
-import os
 from pathlib import Path
 from typing import Annotated
 
@@ -10,6 +9,7 @@ import yaml
 from rich.console import Console
 from rich.table import Table
 
+from ec_agent.io_utils import resolve_api_key
 from ec_agent.llm_adapter import MockLLMAdapter, OpenAIAdapter
 from ec_agent.models import ProjectInput, ProjectOutput
 from ec_agent.rules_engine import RulesEngine
@@ -20,24 +20,6 @@ app = typer.Typer(
     add_completion=False,
 )
 console = Console()
-
-
-def resolve_api_key(cli_value: str | None) -> str | None:
-    """Resolve OpenAI API key from CLI, env var, or local file."""
-    if cli_value:
-        return cli_value
-
-    env_key = os.getenv("OPENAI_API_KEY")
-    if env_key:
-        return env_key
-
-    key_file = os.getenv("OPENAI_API_KEY_FILE")
-    key_path = Path(key_file) if key_file else Path("API_KEY") / "API_KEY.txt"
-    if key_path.is_file():
-        key = key_path.read_text(encoding="utf-8").strip()
-        return key or None
-
-    return None
 
 
 def load_project(input_path: Path) -> ProjectInput:
@@ -296,6 +278,35 @@ def validate(
     except Exception as e:
         console.print(f"[red]✗ Validation failed: {e}[/red]")
         raise typer.Exit(code=1) from e
+
+
+@app.command()
+def web(
+    host: Annotated[
+        str,
+        typer.Option("--host", help="Host to bind the web UI server to."),
+    ] = "127.0.0.1",
+    port: Annotated[
+        int,
+        typer.Option("--port", help="Port for the web UI server."),
+    ] = 8000,
+    open_browser: Annotated[
+        bool,
+        typer.Option("--open/--no-open", help="Open the web UI in a browser."),
+    ] = True,
+) -> None:
+    """Run the local web UI."""
+    from ec_agent.web_app import run
+
+    run(host=host, port=port, open_browser=open_browser)
+
+
+@app.command()
+def desktop() -> None:
+    """Run the desktop UI."""
+    from ec_agent.desktop_app import run
+
+    run()
 
 
 @app.command()

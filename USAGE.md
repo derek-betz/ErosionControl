@@ -6,6 +6,8 @@ This guide provides detailed examples and usage scenarios for the EC Agent.
 
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
+- [Web UI](#web-ui)
+- [Desktop UI](#desktop-ui)
 - [Input File Format](#input-file-format)
 - [Output Format](#output-format)
 - [Custom Rules](#custom-rules)
@@ -56,6 +58,28 @@ Apply jurisdiction-specific or custom rules:
 ```bash
 ec-agent process my_project.yaml --rules my_custom_rules.yaml --output results.yaml
 ```
+
+## Web UI
+
+Run the local web interface:
+
+```bash
+ec-agent web
+```
+
+Open `http://127.0.0.1:8000` in your browser. Paste project YAML/JSON, add optional
+custom rules, then run the analysis and download results.
+
+
+## Desktop UI
+
+Run the desktop interface:
+
+```bash
+ec-agent desktop
+```
+
+Use the tabs to paste project input and custom rules, then run analysis and save output.
 
 ## Input File Format
 
