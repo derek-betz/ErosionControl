@@ -25,17 +25,21 @@ INDEX_HTML = textwrap.dedent(
         <title>EC Agent Web UI</title>
         <style>
           :root {
-            --ink: #13261f;
-            --pine: #2e5f4b;
-            --moss: #6d8a7a;
-            --clay: #8a5a3b;
-            --sand: #efe6d6;
-            --sky: #cfe6f5;
-            --sun: #f3c266;
-            --paper: #f9f4ea;
-            --accent: #d67a4a;
-            --line: rgba(19, 38, 31, 0.14);
-            --shadow: 0 22px 50px rgba(19, 38, 31, 0.18);
+            --ink: #0f172a;
+            --slate: #1f2937;
+            --muted: #4b5563;
+            --border: #e5e7eb;
+            --panel: #ffffff;
+            --canvas: #f4f6fb;
+            --accent: #0ea5e9;
+            --accent-2: #6366f1;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.12);
+            --shadow-strong: 0 18px 48px rgba(14, 165, 233, 0.18);
+            --radius-lg: 18px;
+            --radius-pill: 999px;
           }
 
           * {
@@ -45,95 +49,156 @@ INDEX_HTML = textwrap.dedent(
           body {
             margin: 0;
             color: var(--ink);
-            font-family: "Georgia", "Times New Roman", serif;
+            font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
             background:
-              radial-gradient(circle at 10% 20%, rgba(243, 194, 102, 0.35), transparent 45%),
-              radial-gradient(circle at 85% 10%, rgba(207, 230, 245, 0.6), transparent 50%),
-              linear-gradient(120deg, #f2e9d8 0%, #f7f1e6 55%, #e8f1f7 100%);
+              radial-gradient(circle at 14% 18%, rgba(14, 165, 233, 0.18), transparent 32%),
+              radial-gradient(circle at 84% 8%, rgba(99, 102, 241, 0.16), transparent 30%),
+              linear-gradient(180deg, #f9fbff 0%, #f4f6fb 100%);
             min-height: 100vh;
           }
 
-          body::before {
-            content: "";
-            position: fixed;
-            inset: -20% 0 auto 0;
-            height: 40%;
-            background: linear-gradient(130deg, rgba(46, 95, 75, 0.18), transparent 70%);
-            pointer-events: none;
+          a {
+            color: inherit;
+            text-decoration: none;
           }
 
-          header {
-            padding: 48px 24px 32px;
+          .app-shell {
             max-width: 1200px;
             margin: 0 auto;
-            animation: rise 0.8s ease;
+            padding: 32px 20px 64px;
           }
 
-          .badge {
+          .app-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-soft);
+            border-radius: 20px;
+            padding: 18px 22px;
+            position: sticky;
+            top: 16px;
+            backdrop-filter: blur(12px);
+            z-index: 2;
+          }
+
+          .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+          }
+
+          .eyebrow {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            border-radius: 999px;
-            border: 1px solid var(--line);
-            background: rgba(255, 255, 255, 0.7);
-            font-family: "Trebuchet MS", "Lucida Grande", sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            font-size: 11px;
+            gap: 6px;
+            background: rgba(14, 165, 233, 0.12);
+            color: #0ea5e9;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            padding: 6px 10px;
+            border-radius: var(--radius-pill);
             font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-size: 12px;
           }
 
           h1 {
-            margin: 18px 0 10px;
-            font-family: "Trebuchet MS", "Lucida Grande", sans-serif;
-            font-size: clamp(2rem, 4vw, 3.2rem);
-            letter-spacing: -0.02em;
+            margin: 6px 0 4px;
+            font-size: clamp(2rem, 4vw, 2.6rem);
+            letter-spacing: -0.04em;
+          }
+
+          .subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 1rem;
+          }
+
+          .bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          }
+
+          .ghost {
+            background: transparent;
+            color: var(--ink);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-pill);
+            padding: 10px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
           }
 
           .hero {
-            font-size: 1.05rem;
-            max-width: 720px;
-            color: #344f42;
+            margin: 22px 0 18px;
+            padding: 18px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(120deg, rgba(14, 165, 233, 0.12), rgba(99, 102, 241, 0.08));
+            border: 1px solid rgba(14, 165, 233, 0.18);
+            box-shadow: var(--shadow-soft);
+          }
+
+          .hero p {
+            margin: 6px 0 0;
+            max-width: 880px;
+            color: #0f172a;
+            font-size: 1.02rem;
           }
 
           main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px 64px;
+            margin-top: 24px;
           }
 
           .layout {
             display: grid;
-            gap: 24px;
-            grid-template-columns: minmax(320px, 1fr) minmax(320px, 1.1fr);
+            grid-template-columns: minmax(360px, 1fr) minmax(420px, 1.1fr);
+            gap: 20px;
           }
 
-          .card {
-            background: var(--paper);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(19, 38, 31, 0.08);
-            animation: rise 0.7s ease;
+          .panel {
+            background: var(--panel);
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-soft);
+            padding: 20px 20px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
           }
 
-          .card h2 {
-            margin: 0 0 16px;
-            font-family: "Trebuchet MS", "Lucida Grande", sans-serif;
+          .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
           }
 
-          .card p {
-            margin: 0 0 16px;
-            color: #3b5a4d;
+          .panel-header h2 {
+            margin: 0;
+            letter-spacing: -0.02em;
+          }
+
+          .panel-header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
           }
 
           label {
-            font-family: "Trebuchet MS", "Lucida Grande", sans-serif;
             font-size: 0.9rem;
             letter-spacing: 0.02em;
             display: block;
             margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--ink);
           }
 
           textarea,
@@ -141,15 +206,25 @@ INDEX_HTML = textwrap.dedent(
           select {
             width: 100%;
             border-radius: 12px;
-            border: 1px solid var(--line);
-            padding: 12px;
-            font-size: 0.95rem;
-            font-family: "Courier New", Courier, monospace;
-            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border);
+            padding: 12px 12px;
+            font-size: 0.97rem;
+            font-family: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
+            background: #f8fafc;
+            transition: border 0.2s ease, box-shadow 0.2s ease;
+            color: var(--ink);
+          }
+
+          textarea:focus,
+          input:focus,
+          select:focus {
+            outline: none;
+            border-color: rgba(14, 165, 233, 0.6);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
           }
 
           textarea {
-            min-height: 180px;
+            min-height: 170px;
             resize: vertical;
           }
 
@@ -166,37 +241,42 @@ INDEX_HTML = textwrap.dedent(
           .actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
+            margin-top: 4px;
           }
 
           button {
             border: none;
-            border-radius: 999px;
-            padding: 12px 22px;
-            font-family: "Trebuchet MS", "Lucida Grande", sans-serif;
+            border-radius: var(--radius-pill);
+            padding: 12px 18px;
+            font-family: "Inter", "Segoe UI", sans-serif;
             font-weight: 700;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.02em;
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
           }
 
           button.primary {
-            background: var(--pine);
+            background: linear-gradient(120deg, var(--accent), var(--accent-2));
             color: #fff;
-            box-shadow: 0 14px 30px rgba(46, 95, 75, 0.3);
+            box-shadow: var(--shadow-strong);
           }
 
           button.secondary {
             background: #ffffff;
             color: var(--ink);
-            border: 1px solid var(--line);
+            border: 1px solid var(--border);
           }
 
           button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
           }
 
           button:hover:not(:disabled) {
@@ -204,28 +284,52 @@ INDEX_HTML = textwrap.dedent(
           }
 
           .status {
-            margin-top: 14px;
             font-size: 0.95rem;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px dashed var(--border);
+            background: #f8fafc;
+            display: none;
+            gap: 10px;
+            align-items: center;
+            margin-top: 8px;
           }
 
           .status.error {
-            color: #9b2b1f;
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.06);
           }
 
           .status.success {
-            color: #2e5f4b;
+            color: var(--success);
+            border-color: rgba(34, 197, 94, 0.4);
+            background: rgba(34, 197, 94, 0.06);
+          }
+
+          .callout {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 14px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            color: #0ea5e9;
+            font-weight: 600;
           }
 
           .pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: rgba(214, 122, 74, 0.14);
-            color: #7a3c22;
-            font-size: 0.8rem;
+            padding: 6px 10px;
+            border-radius: var(--radius-pill);
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--accent-2);
+            font-size: 0.82rem;
             margin-left: 8px;
+            font-weight: 700;
           }
 
           .results {
@@ -238,22 +342,45 @@ INDEX_HTML = textwrap.dedent(
             display: flex;
           }
 
+          .results-grid {
+            display: grid;
+            gap: 16px;
+          }
+
+          .result-block {
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+          }
+
+          .table-block + .table-block {
+            margin-top: 12px;
+          }
+
+          .table-block h3 {
+            margin: 0 0 10px;
+          }
+
           table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.92rem;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
           }
 
           th,
           td {
             text-align: left;
             padding: 10px 8px;
-            border-bottom: 1px solid var(--line);
+            border-bottom: 1px solid var(--border);
           }
 
           th {
-            font-family: "Trebuchet MS", "Lucida Grande", sans-serif;
-            color: #3a5a4b;
+            color: var(--muted);
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
@@ -261,27 +388,28 @@ INDEX_HTML = textwrap.dedent(
 
           .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 12px;
           }
 
           #project-meta p {
             margin: 0 0 12px;
             font-size: 1rem;
-            color: #2e5f4b;
+            color: var(--ink);
           }
 
           .summary-card {
             padding: 14px 16px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
           }
 
           .summary-card span {
             display: block;
             font-size: 0.8rem;
-            color: #5b776a;
+            color: var(--muted);
             text-transform: uppercase;
             letter-spacing: 0.08em;
           }
@@ -292,7 +420,7 @@ INDEX_HTML = textwrap.dedent(
 
           .raw-output textarea {
             min-height: 140px;
-            font-family: "Courier New", Courier, monospace;
+            font-family: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
           }
 
           .spinner {
@@ -319,6 +447,13 @@ INDEX_HTML = textwrap.dedent(
             .layout {
               grid-template-columns: 1fr;
             }
+
+            .app-bar {
+              position: static;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 12px;
+            }
           }
 
           @media (prefers-reduced-motion: reduce) {
@@ -331,102 +466,133 @@ INDEX_HTML = textwrap.dedent(
         </style>
       </head>
       <body>
-        <header>
-          <span class="badge">EC Agent</span>
-          <h1>Erosion control recommendations in a web workspace</h1>
-          <p class="hero">
-            Drop in project YAML or JSON, run the rules engine, and review practices,
-            pay items, and cost summaries in one place. Everything runs locally.
-          </p>
-        </header>
-        <main>
-          <div class="layout">
-            <section class="card">
-              <h2>Project input</h2>
-              <p>Paste project data or load a file. The app never leaves your machine.</p>
-              <form id="project-form">
-                <div class="field">
-                  <label for="project-file">Project file (YAML or JSON)</label>
-                  <input id="project-file" type="file" accept=".yaml,.yml,.json">
+        <div class="app-shell">
+          <div class="app-bar">
+            <div class="brand">
+              <span class="eyebrow">INDOT Field Tools</span>
+              <div>
+                <h1>Erosion Control Agent</h1>
+                <p class="subtitle">Matching the Cost Estimate Generator workspace for a unified toolkit.</p>
+              </div>
+            </div>
+            <div class="bar-actions">
+              <span class="pill">Desktop-like experience</span>
+              <button class="ghost" type="button" id="clear-all-top">Reset form</button>
+            </div>
+          </div>
+
+          <div class="hero">
+            <p>
+              Keep the interaction model consistent across roadway tools: drop in project data,
+              configure rules, and review outputs side-by-side with clear calls to action. Everything
+              runs locally, mirroring the Cost Estimate Generator flow.
+            </p>
+          </div>
+
+          <main>
+            <div class="layout">
+              <section class="panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Project inputs</h2>
+                    <p>Same entry flow as the estimator: files, formats, and toggles grouped together.</p>
+                  </div>
+                  <span class="pill">Step 1 of 2</span>
                 </div>
-                <div class="field">
-                  <label for="project-format">Project format</label>
-                  <select id="project-format">
-                    <option value="auto">Auto detect</option>
-                    <option value="yaml">YAML</option>
-                    <option value="json">JSON</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="project-text">Project input</label>
-                  <textarea id="project-text"></textarea>
-                </div>
-                <div class="field">
-                  <label for="rules-file">Custom rules file (optional)</label>
-                  <input id="rules-file" type="file" accept=".yaml,.yml">
-                </div>
-                <div class="field">
-                  <label for="rules-text">Custom rules YAML (optional)</label>
-                  <textarea id="rules-text" placeholder="Paste custom rules YAML here"></textarea>
-                </div>
-                <div class="row">
+                <form id="project-form">
+                  <div class="callout">
+                    <span>⇪</span>
+                    <div>Load your JSON or YAML directly, or paste values below. Custom rules are optional.</div>
+                  </div>
                   <div class="field">
-                    <label for="llm-toggle">LLM enhancement</label>
-                    <select id="llm-toggle">
-                      <option value="false">Off</option>
-                      <option value="true">On</option>
+                    <label for="project-file">Project file (YAML or JSON)</label>
+                    <input id="project-file" type="file" accept=".yaml,.yml,.json">
+                  </div>
+                  <div class="field">
+                    <label for="project-format">Project format</label>
+                    <select id="project-format">
+                      <option value="auto">Auto detect</option>
+                      <option value="yaml">YAML</option>
+                      <option value="json">JSON</option>
                     </select>
                   </div>
                   <div class="field">
-                    <label for="llm-key">OpenAI API key (optional)</label>
-                    <input id="llm-key" type="password" placeholder="sk-...">
+                    <label for="project-text">Project input</label>
+                    <textarea id="project-text" placeholder="Paste project YAML or JSON here"></textarea>
                   </div>
-                </div>
-                <div class="actions">
-                  <button class="primary" id="run-btn" type="submit">
-                    Run analysis
-                    <span class="spinner" id="run-spinner"></span>
-                  </button>
-                  <button class="secondary" id="load-example" type="button">Load example</button>
-                  <button class="secondary" id="clear-all" type="button">Clear</button>
-                </div>
-                <div id="status" class="status"></div>
-              </form>
-            </section>
-            <section class="card">
-              <h2>Results</h2>
-              <div id="results" class="results">
-                <div id="project-meta"></div>
-                <div>
-                  <h3>Summary</h3>
-                  <div class="summary-grid" id="summary-grid"></div>
-                </div>
-                <div id="llm-section"></div>
-                <div id="temp-practices"></div>
-                <div id="perm-practices"></div>
-                <div id="pay-items"></div>
-                <div class="raw-output">
-                  <h3>Raw output</h3>
+                  <div class="field">
+                    <label for="rules-file">Custom rules file (optional)</label>
+                    <input id="rules-file" type="file" accept=".yaml,.yml">
+                  </div>
+                  <div class="field">
+                    <label for="rules-text">Custom rules YAML (optional)</label>
+                    <textarea id="rules-text" placeholder="Paste custom rules YAML here"></textarea>
+                  </div>
+                  <div class="row">
+                    <div class="field">
+                      <label for="llm-toggle">LLM enhancement</label>
+                      <select id="llm-toggle">
+                        <option value="false">Off</option>
+                        <option value="true">On</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="llm-key">OpenAI API key (optional)</label>
+                      <input id="llm-key" type="password" placeholder="sk-...">
+                    </div>
+                  </div>
                   <div class="actions">
-                    <button class="secondary" id="download-json" type="button">Download JSON</button>
-                    <button class="secondary" id="download-yaml" type="button">Download YAML</button>
+                    <button class="primary" id="run-btn" type="submit">
+                      Run analysis
+                      <span class="spinner" id="run-spinner"></span>
+                    </button>
+                    <button class="secondary" id="load-example" type="button">Load example</button>
+                    <button class="secondary" id="clear-all" type="button">Clear</button>
                   </div>
-                  <div class="field">
-                    <label for="raw-json">JSON</label>
-                    <textarea id="raw-json" readonly></textarea>
+                  <div id="status" class="status"></div>
+                </form>
+              </section>
+              <section class="panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Results</h2>
+                    <p>Unified output cards echo the estimator: summary tiles, tables, and export tools.</p>
                   </div>
-                  <div class="field">
-                    <label for="raw-yaml">YAML</label>
-                    <textarea id="raw-yaml" readonly></textarea>
+                  <span class="pill">Step 2 of 2</span>
+                </div>
+                <div id="results" class="results results-grid">
+                  <div id="project-meta"></div>
+                  <div class="result-block">
+                    <h3>Summary</h3>
+                    <div class="summary-grid" id="summary-grid"></div>
+                  </div>
+                  <div class="result-block" id="llm-section"></div>
+                  <div class="result-block" id="temp-practices"></div>
+                  <div class="result-block" id="perm-practices"></div>
+                  <div class="result-block" id="pay-items"></div>
+                  <div class="raw-output result-block">
+                    <h3>Raw output</h3>
+                    <div class="actions">
+                      <button class="secondary" id="download-json" type="button">Download JSON</button>
+                      <button class="secondary" id="download-yaml" type="button">Download YAML</button>
+                    </div>
+                    <div class="field">
+                      <label for="raw-json">JSON</label>
+                      <textarea id="raw-json" readonly></textarea>
+                    </div>
+                    <div class="field">
+                      <label for="raw-yaml">YAML</label>
+                      <textarea id="raw-yaml" readonly></textarea>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <p id="results-placeholder">
-                Results will appear here after you run the analysis.
-              </p>
-            </section>
-          </div>
-        </main>
+                <p id="results-placeholder">
+                  Results will appear here after you run the analysis.
+                </p>
+              </section>
+            </div>
+          </main>
+        </div>
         <script>
           const SAMPLE_PROJECT = `project_name: Highway 101 Widening Project
     jurisdiction: California Department of Transportation (Caltrans)
@@ -501,6 +667,7 @@ INDEX_HTML = textwrap.dedent(
           const rawYaml = document.getElementById("raw-yaml");
           const runBtn = document.getElementById("run-btn");
           const runSpinner = document.getElementById("run-spinner");
+          llmSection.style.display = "none";
 
           let lastOutput = null;
           let lastOutputYaml = "";
@@ -508,6 +675,7 @@ INDEX_HTML = textwrap.dedent(
           function setStatus(message, kind) {
             statusEl.textContent = message || "";
             statusEl.className = "status";
+            statusEl.style.display = message ? "inline-flex" : "none";
             if (kind) {
               statusEl.classList.add(kind);
             }
@@ -583,8 +751,10 @@ INDEX_HTML = textwrap.dedent(
             const error = summary.llm_error;
             if (!notice && !insights && !error) {
               llmSection.innerHTML = "";
+              llmSection.style.display = "none";
               return;
             }
+            llmSection.style.display = "block";
             const parts = [];
             if (notice) {
               parts.push(`<p><span class="pill">Notice</span> ${escapeHtml(notice)}</p>`);
@@ -609,7 +779,7 @@ INDEX_HTML = textwrap.dedent(
             }</p>`;
             renderSummary(output.summary || {});
             renderLLM(output.summary || {});
-            tempPractices.innerHTML = buildTable(
+            const tempTable = buildTable(
               "Temporary practices",
               ["Practice", "Quantity", "Unit", "Rule"],
               (output.temporary_practices || []).map((item) => [
@@ -619,7 +789,10 @@ INDEX_HTML = textwrap.dedent(
                 item.rule_id,
               ])
             );
-            permPractices.innerHTML = buildTable(
+            tempPractices.innerHTML = tempTable;
+            tempPractices.style.display = tempTable ? "block" : "none";
+
+            const permTable = buildTable(
               "Permanent practices",
               ["Practice", "Quantity", "Unit", "Rule"],
               (output.permanent_practices || []).map((item) => [
@@ -629,7 +802,10 @@ INDEX_HTML = textwrap.dedent(
                 item.rule_id,
               ])
             );
-            payItems.innerHTML = buildTable(
+            permPractices.innerHTML = permTable;
+            permPractices.style.display = permTable ? "block" : "none";
+
+            const payTable = buildTable(
               "Pay items",
               ["Item", "Description", "Quantity", "Unit", "Est cost"],
               (output.pay_items || []).map((item) => [
@@ -642,6 +818,8 @@ INDEX_HTML = textwrap.dedent(
                   : "N/A",
               ])
             );
+            payItems.innerHTML = payTable;
+            payItems.style.display = payTable ? "block" : "none";
           }
 
           function toggleResults(show) {
@@ -661,13 +839,7 @@ INDEX_HTML = textwrap.dedent(
             URL.revokeObjectURL(url);
           }
 
-          document.getElementById("load-example").addEventListener("click", () => {
-            projectText.value = SAMPLE_PROJECT;
-            projectFormat.value = "yaml";
-            setStatus("Loaded example project.", "success");
-          });
-
-          document.getElementById("clear-all").addEventListener("click", () => {
+          function clearAllInputs() {
             projectText.value = "";
             rulesText.value = "";
             projectFileInput.value = "";
@@ -676,7 +848,19 @@ INDEX_HTML = textwrap.dedent(
             llmToggle.value = "false";
             setStatus("", "");
             toggleResults(false);
+          }
+
+          document.getElementById("load-example").addEventListener("click", () => {
+            projectText.value = SAMPLE_PROJECT;
+            projectFormat.value = "yaml";
+            setStatus("Loaded example project.", "success");
           });
+
+          document.getElementById("clear-all").addEventListener("click", clearAllInputs);
+          const clearAllTop = document.getElementById("clear-all-top");
+          if (clearAllTop) {
+            clearAllTop.addEventListener("click", clearAllInputs);
+          }
 
           projectFileInput.addEventListener("change", async () => {
             try {
