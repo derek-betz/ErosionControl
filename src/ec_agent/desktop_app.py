@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import tkinter as tk
+from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
 import yaml
@@ -265,5 +265,5 @@ class DesktopApp:
 def run() -> None:
     """Launch the desktop UI."""
     root = tk.Tk()
-    app = DesktopApp(root)
+    DesktopApp(root)
     root.mainloop()
