@@ -86,7 +86,11 @@ class DesktopApp:
         style.configure("StatusBar.TFrame", background=palette["surface_alt"])
 
         style.configure("TLabel", background=palette["card"], foreground=palette["text"])
-        style.configure("Status.TLabel", background=palette["surface_alt"], foreground=palette["muted"])
+        style.configure(
+            "Status.TLabel",
+            background=palette["surface_alt"],
+            foreground=palette["muted"],
+        )
         style.configure(
             "Heading.TLabel",
             background=palette["hero"],
@@ -239,9 +243,7 @@ class DesktopApp:
         header = ttk.Frame(self.root, style="Header.TFrame", padding=(24, 18))
         header.grid(row=0, column=0, sticky="ew")
         header.columnconfigure(0, weight=1)
-        ttk.Label(header, text="EC Agent", style="Heading.TLabel").grid(
-            row=0, column=0, sticky="w"
-        )
+        ttk.Label(header, text="EC Agent", style="Heading.TLabel").grid(row=0, column=0, sticky="w")
         ttk.Label(
             header,
             text="Erosion control practices and pay items assistant",
