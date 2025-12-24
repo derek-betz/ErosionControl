@@ -1,0 +1,41 @@
+- doc_id: INDOT-IDM-EC
+  title: INDOT Design Manual - Erosion & Sediment Control
+  version_date: 2024-01-01
+  filename: idm_ec.txt
+  official_url: https://www.in.gov/indot/design-manual/
+  citation_hint: "General erosion and sediment control guidance."
+- doc_id: INDOT-StdSpecs-205
+  title: INDOT Standard Specifications Section 205
+  version_date: 2024-01-01
+  filename: stdspecs_205.txt
+  citation_hint: "Temporary erosion and sediment control items."
+- doc_id: INDOT-StdDrawings-ESC-1
+  title: INDOT Standard Drawings ESC-1
+  version_date: 2024-01-01
+  filename: std_drawings_esc1.txt
+  citation_hint: "Stabilized construction entrance."
+- doc_id: INDOT-StdSpecs-621
+  title: INDOT Standard Specifications Section 621
+  version_date: 2024-01-01
+  filename: stdspecs_621.txt
+  citation_hint: "Seeding and sodding."
+- doc_id: INDOT-StdDrawings-TRM
+  title: INDOT Standard Drawings TRM
+  version_date: 2024-01-01
+  filename: std_drawings_trm.txt
+  citation_hint: "Turf reinforcement mats."
+- doc_id: INDOT-StdDrawings-ES-2
+  title: INDOT Standard Drawings ES-2
+  version_date: 2024-01-01
+  filename: std_drawings_es2.txt
+  citation_hint: "Outlet protection."
+- doc_id: INDOT-StdDrawings-ES-5
+  title: INDOT Standard Drawings ES-5
+  version_date: 2024-01-01
+  filename: std_drawings_es5.txt
+  citation_hint: "Check dams."
+- doc_id: INDOT-Stormwater-Manual
+  title: INDOT Stormwater Quality Manual
+  version_date: 2023-01-01
+  filename: stormwater_manual.txt
+  citation_hint: "Work near waters and wetlands."

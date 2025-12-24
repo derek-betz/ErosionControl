@@ -1,0 +1,71 @@
+catalog:
+  - pay_item_number: "205-1.00"
+    description: "Silt Fence, Type A"
+    unit: "LFT"
+    notes: "VERIFY PAY ITEM NUMBER"
+    source_doc_id: "INDOT-StdSpecs-205"
+  - pay_item_number: "205-2.00"
+    description: "Inlet Protection, Type 1"
+    unit: "EACH"
+    notes: "VERIFY PAY ITEM NUMBER"
+    source_doc_id: "INDOT-StdSpecs-205"
+  - pay_item_number: "205-3.00"
+    description: "Stabilized Construction Entrance"
+    unit: "EACH"
+    notes: "VERIFY PAY ITEM NUMBER"
+    source_doc_id: "INDOT-StdDrawings-ESC-1"
+  - pay_item_number: "621-1.00"
+    description: "Seeding, Permanent"
+    unit: "ACRE"
+    notes: "VERIFY PAY ITEM NUMBER"
+    source_doc_id: "INDOT-StdSpecs-621"
+  - pay_item_number: "621-2.00"
+    description: "Temporary Seeding and Mulching"
+    unit: "ACRE"
+    notes: "VERIFY PAY ITEM NUMBER"
+    source_doc_id: "INDOT-StdSpecs-621"
+  - pay_item_number: "703-9.00"
+    description: "Riprap Outlet Protection"
+    unit: "TON"
+    notes: "VERIFY PAY ITEM NUMBER"
+    source_doc_id: "INDOT-StdDrawings-ES-2"
+  - pay_item_number: "707-1.00"
+    description: "Turf Reinforcement Mat"
+    unit: "SYS"
+    notes: "VERIFY PAY ITEM NUMBER"
+    source_doc_id: "INDOT-StdDrawings-TRM"
+  - pay_item_number: "205-4.00"
+    description: "Check Dam"
+    unit: "EACH"
+    notes: "VERIFY PAY ITEM NUMBER"
+    source_doc_id: "INDOT-StdDrawings-ES-5"
+  - pay_item_number: "205-5.00"
+    description: "Sediment Basin"
+    unit: "EACH"
+    notes: "VERIFY PAY ITEM NUMBER"
+    source_doc_id: "INDOT-IDM-EC"
+practice_map:
+  inlet_protection:
+    - pay_item_number: "205-2.00"
+  silt_fence:
+    - pay_item_number: "205-1.00"
+  construction_entrance:
+    - pay_item_number: "205-3.00"
+  temporary_stabilization:
+    - pay_item_number: "621-2.00"
+  hydraulic_mulch:
+    - pay_item_number: "621-2.00"
+  permanent_seeding:
+    - pay_item_number: "621-1.00"
+  turf_reinforcement_mat:
+    - pay_item_number: "707-1.00"
+  riprap_outlet_protection:
+    - pay_item_number: "703-9.00"
+  sediment_basin:
+    - pay_item_number: "205-5.00"
+  check_dams:
+    - pay_item_number: "205-4.00"
+  double_perimeter_control:
+    - pay_item_number: "205-1.00"
+  winter_stabilization:
+    - pay_item_number: "621-2.00"

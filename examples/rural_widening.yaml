@@ -1,0 +1,15 @@
+project_name: Rural Widening
+location: SR 100
+description: Shoulder widening and ditch grading
+phase: construction
+temporary_required: true
+permanent_required: true
+disturbed_area_ac: 8.0
+contains_inlets: false
+near_water: true
+work_in_wetlands: false
+winter_construction: false
+max_slope_percent: 6
+soil_type: silt loam
+season: summer
+traffic_maintenance: lane closures

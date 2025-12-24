@@ -1,0 +1,177 @@
+- id: INDOT-R-001
+  title: Inlet protection for onsite inlets
+  phase: temporary
+  conditions:
+    eq: ["contains_inlets", true]
+  recommendations:
+    - inlet_protection
+  pay_items:
+    - inlet_protection
+  source:
+    doc_id: INDOT-IDM-EC
+    section: "Section TBD - inlet protection"
+  explanation_template: "Provide inlet protection for all active storm drain inlets."
+
+- id: INDOT-R-002
+  title: Perimeter control for disturbed areas
+  phase: temporary
+  conditions:
+    and:
+      - exists: "disturbed_area_ac"
+      - gt: ["disturbed_area_ac", 0.1]
+  recommendations:
+    - silt_fence
+  pay_items:
+    - silt_fence
+  source:
+    doc_id: INDOT-StdSpecs-205
+    section: "205-4.7"
+  explanation_template: "Install silt fence or equivalent perimeter control downgradient of disturbance."
+
+- id: INDOT-R-003
+  title: Construction entrance at site access
+  phase: temporary
+  conditions:
+    exists: "traffic_maintenance"
+  recommendations:
+    - construction_entrance
+  pay_items:
+    - construction_entrance
+  source:
+    doc_id: INDOT-StdDrawings-ESC-1
+    section: "Stabilized construction entrance"
+  explanation_template: "Provide stabilized construction entrance/exit to limit tracking."
+
+- id: INDOT-R-004
+  title: Temporary stabilization for inactive soils
+  phase: temporary
+  conditions:
+    or:
+      - missing: "season"
+      - exists: "disturbed_area_ac"
+  recommendations:
+    - temporary_stabilization
+  pay_items:
+    - temporary_stabilization
+  source:
+    doc_id: INDOT-IDM-EC
+    section: "Stabilization timing"
+  explanation_template: "Stabilize inactive disturbed soil per INDOT timeframes (VERIFY)."
+
+- id: INDOT-R-005
+  title: Mulch or hydraulic mulch on steep slopes
+  phase: temporary
+  conditions:
+    and:
+      - exists: "max_slope_percent"
+      - gt: ["max_slope_percent", 3]
+  recommendations:
+    - hydraulic_mulch
+  pay_items:
+    - hydraulic_mulch
+  source:
+    doc_id: INDOT-IDM-EC
+    section: "Mulch selection"
+  explanation_template: "Use hydraulic mulch on slopes steeper than seeded limits (VERIFY WITH INDOT SOURCE)."
+
+- id: INDOT-R-006
+  title: Permanent seeding for exposed soils
+  phase: permanent
+  conditions:
+    exists: "disturbed_area_ac"
+  recommendations:
+    - permanent_seeding
+  pay_items:
+    - permanent_seeding
+  source:
+    doc_id: INDOT-StdSpecs-621
+    section: "Seeding"
+  explanation_template: "Provide permanent seeding per INDOT Section 621."
+
+- id: INDOT-R-007
+  title: Turf reinforcement mat on steep slopes or channels
+  phase: permanent
+  conditions:
+    and:
+      - exists: "max_slope_percent"
+      - gt: ["max_slope_percent", 5]
+  recommendations:
+    - turf_reinforcement_mat
+  pay_items:
+    - turf_reinforcement_mat
+  source:
+    doc_id: INDOT-StdDrawings-TRM
+    section: "TRM selection"
+  explanation_template: "Use TRM where velocities/slopes exceed rolled erosion control product limits (VERIFY)."
+
+- id: INDOT-R-008
+  title: Outlet protection at culvert and pipe discharges
+  phase: temporary
+  conditions:
+    eq: ["near_water", true]
+  recommendations:
+    - riprap_outlet_protection
+  pay_items:
+    - riprap_outlet_protection
+  source:
+    doc_id: INDOT-StdDrawings-ES-2
+    section: "Outlet protection"
+  explanation_template: "Provide riprap outlet protection where discharges enter channels."
+
+- id: INDOT-R-009
+  title: Sediment basin or trap for larger disturbed drainage
+  phase: temporary
+  conditions:
+    and:
+      - exists: "disturbed_area_ac"
+      - gt: ["disturbed_area_ac", 5]
+  recommendations:
+    - sediment_basin
+  pay_items:
+    - sediment_basin
+  source:
+    doc_id: INDOT-IDM-EC
+    section: "Sediment basin thresholds (VERIFY)"
+  explanation_template: "Provide sediment trap/basin where drainage area exceeds INDOT threshold (VERIFY)."
+
+- id: INDOT-R-010
+  title: Check dams for ditch or channel protection
+  phase: temporary
+  conditions:
+    eq: ["temporary_required", true]
+  recommendations:
+    - check_dams
+  pay_items:
+    - check_dams
+  source:
+    doc_id: INDOT-StdDrawings-ES-5
+    section: "Check dams"
+  explanation_template: "Use check dams in temporary ditches to slow velocities."
+
+- id: INDOT-R-011
+  title: Enhanced controls near waters/wetlands
+  phase: both
+  conditions:
+    eq: ["work_in_wetlands", true]
+  recommendations:
+    - double_perimeter_control
+  pay_items:
+    - silt_fence
+  source:
+    doc_id: INDOT-Stormwater-Manual
+    section: "Work near waters guidance"
+  explanation_template: "Provide redundant controls adjacent to waters/wetlands (VERIFY WITH INDOT SOURCE)."
+
+- id: INDOT-R-012
+  title: Winter construction considerations
+  phase: temporary
+  conditions:
+    eq: ["winter_construction", true]
+  recommendations:
+    - winter_stabilization
+  pay_items:
+    - temporary_stabilization
+  source:
+    doc_id: INDOT-IDM-EC
+    section: "Winter stabilization"
+  explanation_template: "Use mulch blankets or temporary cover during winter work (VERIFY)."

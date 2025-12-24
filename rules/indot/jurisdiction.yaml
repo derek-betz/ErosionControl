@@ -1,0 +1,4 @@
+jurisdiction: INDOT
+default_citation_style: INDOT
+allow_non_indot: false
+notes: "INDOT resources prioritized; non-INDOT citations flagged."

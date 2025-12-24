@@ -1,0 +1,15 @@
+project_name: Urban Resurfacing
+location: Main Street
+description: Mill and overlay with ADA ramp upgrades
+phase: construction
+temporary_required: true
+permanent_required: true
+disturbed_area_ac: 1.5
+contains_inlets: true
+near_water: false
+work_in_wetlands: false
+winter_construction: false
+max_slope_percent: 2
+soil_type: urban fill
+season: spring
+traffic_maintenance: maintain traffic

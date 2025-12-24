@@ -1,0 +1,15 @@
+project_name: Wetland Crossing
+location: County Road 50
+description: New culvert through wetland area
+phase: construction
+temporary_required: true
+permanent_required: true
+disturbed_area_ac: 3.0
+contains_inlets: false
+near_water: true
+work_in_wetlands: true
+winter_construction: true
+max_slope_percent: 4
+soil_type: peat
+season: winter
+traffic_maintenance: detour
