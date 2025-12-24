@@ -1,0 +1,44 @@
+rules:
+  # Example custom rule for a specific jurisdiction
+  - id: CUSTOM_MULCH_001
+    name: Straw Mulch Application
+    source: County Stormwater Management Manual
+    priority: 35
+    conditions:
+      - field: total_disturbed_acres
+        operator: gte
+        value: 0.5
+      - field: predominant_soil
+        operator: in
+        value: [sand, silt]
+    action:
+      practice_type: mulch
+      is_temporary: true
+      quantity_formula: total_disturbed_acres * 43560 / 9 * 0.8
+      unit: SY
+      location_template: Exposed soil areas with sandy/silty soil
+      justification: Temporary mulch protection for erosion-prone soils
+      pay_item_number: EC-007
+      pay_item_description: Straw Mulch Application
+      estimated_unit_cost: 0.75
+    notes: Apply at 2-inch depth minimum
+
+  - id: CUSTOM_DUST_001
+    name: Dust Control
+    source: Local Air Quality Management District
+    priority: 45
+    conditions:
+      - field: total_disturbed_acres
+        operator: gte
+        value: 2.0
+    action:
+      practice_type: dust_control
+      is_temporary: true
+      quantity_formula: total_disturbed_acres * 90
+      unit: EA
+      location_template: Active work areas
+      justification: Dust control required for projects > 2 acres
+      pay_item_number: EC-008
+      pay_item_description: Dust Control Water Application
+      estimated_unit_cost: 50.00
+    notes: Water application 3x per day during dry conditions
