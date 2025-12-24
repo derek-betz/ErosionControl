@@ -261,5 +261,5 @@ class DesktopApp:
 def run() -> None:
     """Launch the desktop UI."""
     root = tk.Tk()
-    _app = DesktopApp(root)  # noqa: F841 - Instance must be kept alive for GUI
+    DesktopApp(root)
     root.mainloop()
