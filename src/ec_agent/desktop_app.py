@@ -590,9 +590,7 @@ class DesktopApp:
         name = Path(path).name
         self.plan_set_name = name
         self.plan_set_data = data
-        summary = build_attachment_summary(
-            None, (name, data), self.plan_set_has_ec_plans.get()
-        )
+        summary = build_attachment_summary(None, (name, data), self.plan_set_has_ec_plans.get())
         self.plan_set_summary = summary
         label = name
         page_count = summary.get("plan_set_pdf_pages")
