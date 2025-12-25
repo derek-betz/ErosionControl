@@ -54,9 +54,21 @@ def run(
     force_new_session: Annotated[
         bool, typer.Option("--force-new-session", help="Ignore previous sessions")
     ] = False,
+    min_job_size: Annotated[
+        float | None,
+        typer.Option("--min-job-size", help="Minimum contract amount (inclusive)"),
+    ] = None,
+    max_job_size: Annotated[
+        float | None,
+        typer.Option("--max-job-size", help="Maximum contract amount (inclusive)"),
+    ] = None,
     bidtabs_path: Annotated[
         Path | None, typer.Option(help="Path to BidTabs export (CSV/Excel)")
     ] = None,
+    extract: Annotated[
+        bool,
+        typer.Option("--extract/--no-extract", help="Enable content extraction"),
+    ] = True,
 ) -> None:
     """Run the EC Train pipeline end-to-end."""
     cfg = Config.from_env()
@@ -71,7 +83,14 @@ def run(
 
     console.print(f"[cyan]Scanning BidTabs from {bidtabs_source}[/cyan]")
     contracts = scan_bidtabs(Path(bidtabs_source))
-    selected = select_contracts(contracts, count=count, seen_contracts=seen_contracts, shuffle=True)
+    selected = select_contracts(
+        contracts,
+        count=count,
+        seen_contracts=seen_contracts,
+        min_job_size=min_job_size,
+        max_job_size=max_job_size,
+        shuffle=True,
+    )
     if not selected:
         console.print("[yellow]No new contracts available.[/yellow]")
         raise typer.Exit(code=0)
@@ -115,7 +134,8 @@ def run(
                     ],
                 )
                 for doc in downloads:
-                    extract_content(doc.path)
+                    if extract:
+                        extract_content(doc.path)
                     key_docs[doc.name] = doc.path.as_posix()
             else:
                 console.print(f"[yellow]Contract {contract.contract} not found in ERMS.[/yellow]")

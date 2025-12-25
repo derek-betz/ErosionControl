@@ -14,6 +14,7 @@ def test_scan_bidtabs_filters_pay_item(tmp_path: Path):
         "Description": ["205-12616 Erosion Control", "Other", "205-12616"],
         "Quantity": [10, 5, 20],
         "LettingDate": ["2024-02-01", "2024-02-01", "2023-12-01"],
+        "Job Size": [2_500_000, 2_500_000, 12_000_000],
     }
     df = pd.DataFrame(data)
     csv_path = tmp_path / "bidtabs.csv"
@@ -24,6 +25,9 @@ def test_scan_bidtabs_filters_pay_item(tmp_path: Path):
     qty_lookup = {c.contract: c.bidtabs_qty for c in contracts}
     assert qty_lookup["R-12345"] == 15
     assert qty_lookup["R-99999"] == 20
+    size_lookup = {c.contract: c.job_size for c in contracts}
+    assert size_lookup["R-12345"] == 2_500_000
+    assert size_lookup["R-99999"] == 12_000_000
 
 
 def test_select_contracts_skips_seen(tmp_path: Path):
@@ -35,3 +39,13 @@ def test_select_contracts_skips_seen(tmp_path: Path):
     selected = select_contracts(candidates, count=2, seen_contracts={"A"})
     assert len(selected) == 2
     assert all(c.contract != "A" for c in selected)
+
+
+def test_select_contracts_filters_by_job_size():
+    candidates = [
+        BidTabContract(contract="A", job_size=1_000_000),
+        BidTabContract(contract="B", job_size=5_000_000),
+        BidTabContract(contract="C", job_size=None),
+    ]
+    selected = select_contracts(candidates, count=5, min_job_size=2_000_000, max_job_size=10_000_000)
+    assert [c.contract for c in selected] == ["B"]
