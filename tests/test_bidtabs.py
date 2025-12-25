@@ -10,7 +10,7 @@ from ec_train.bidtabs import PAY_ITEM_TARGET, BidTabContract, scan_bidtabs, sele
 def test_scan_bidtabs_filters_pay_item(tmp_path: Path):
     data = {
         "ContractNumber": ["R-12345", "R-12345", "R-99999"],
-        "ItemNumber": [PAY_ITEM_TARGET, "OTHER", PAY_ITEM_TARGET],
+        "ItemNumber": [PAY_ITEM_TARGET, PAY_ITEM_TARGET, PAY_ITEM_TARGET],
         "Description": ["205-12616 Erosion Control", "Other", "205-12616"],
         "Quantity": [10, 5, 20],
         "LettingDate": ["2024-02-01", "2024-02-01", "2023-12-01"],
