@@ -5,7 +5,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
 
 import pdfplumber
 from docx import Document
@@ -66,7 +65,12 @@ def extract_content(path: Path) -> ExtractedContent:
             if "205" in lower or "section" in lower:
                 spec_refs.append(line.strip())
             pages.append(idx)
-    return ExtractedContent(path=path, findings=findings[:20], spec_refs=list(dict.fromkeys(spec_refs)), pages=pages[:20])
+    return ExtractedContent(
+        path=path,
+        findings=findings[:20],
+        spec_refs=list(dict.fromkeys(spec_refs)),
+        pages=pages[:20],
+    )
 
 
 __all__ = ["ExtractedContent", "extract_content", "KEYWORDS", "PAY_ITEM_REGEX"]

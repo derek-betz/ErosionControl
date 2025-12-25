@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import random
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, Sequence
 
 import pandas as pd
 
@@ -33,8 +33,10 @@ def scan_bidtabs(path: Path, pay_item: str = PAY_ITEM_TARGET) -> list[BidTabCont
     """Scan a BidTabs export and return contracts containing the pay item."""
     df = _load_bidtabs(path)
     columns_lower = {col.lower(): col for col in df.columns}
-    contract_col = columns_lower.get("contract") or columns_lower.get("contractnumber") or next(
-        (col for col in df.columns if "contract" in col.lower()), None
+    contract_col = (
+        columns_lower.get("contract")
+        or columns_lower.get("contractnumber")
+        or next((col for col in df.columns if "contract" in col.lower()), None)
     )
     item_col = next((col for col in df.columns if "item" in col.lower()), None)
     desc_col = next((col for col in df.columns if "description" in col.lower()), None)
@@ -50,7 +52,8 @@ def scan_bidtabs(path: Path, pay_item: str = PAY_ITEM_TARGET) -> list[BidTabCont
     matches = df[df[item_col].str.contains(pay_item, case=False, na=False)]
     if desc_col:
         matches = matches[
-            matches[desc_col].fillna("").str.contains(pay_item.replace("-", " "), case=False) | matches[item_col].str.contains(pay_item, case=False)
+            matches[desc_col].fillna("").str.contains(pay_item.replace("-", " "), case=False)
+            | matches[item_col].str.contains(pay_item, case=False)
         ]
 
     grouped = matches.groupby(df[contract_col].astype(str))

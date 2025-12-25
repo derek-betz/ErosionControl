@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from typing import Iterable, Mapping
 
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
