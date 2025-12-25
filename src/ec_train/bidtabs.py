@@ -56,7 +56,7 @@ def scan_bidtabs(path: Path, pay_item: str = PAY_ITEM_TARGET) -> list[BidTabCont
             | matches[item_col].str.contains(pay_item, case=False)
         ]
 
-    grouped = matches.groupby(df[contract_col].astype(str))
+    grouped = matches.groupby(matches[contract_col].astype(str))
     contracts: list[BidTabContract] = []
     for contract_num, group in grouped:
         qty = float(group[qty_col].sum()) if qty_col else None
