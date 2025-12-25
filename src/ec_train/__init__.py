@@ -1,6 +1,6 @@
 """EC Train - Contract harvesting and feature extraction utilities."""
 
-from .bidtabs import BidTabContract, select_contracts, scan_bidtabs
+from .bidtabs import BidTabContract, scan_bidtabs, select_contracts
 from .config import Config
 from .excel_writer import FeatureRow
 from .session import SessionLog

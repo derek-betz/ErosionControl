@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Annotated, Iterable
+from typing import Annotated
 
 import typer
 from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
 
-from .bidtabs import select_contracts, scan_bidtabs
+from .bidtabs import scan_bidtabs, select_contracts
 from .config import Config
 from .erms import ERMSFetcher
 from .excel_writer import FeatureRow, write_workbook
@@ -42,17 +42,29 @@ def _load_seen(resume_file: Path | None, session: SessionLog, force_new: bool) -
 @app.command()
 def run(
     count: Annotated[int, typer.Option("--count", "-n", help="Number of contracts to process")] = 3,
-    output_dir: Annotated[Path, typer.Option("--output-dir", "-o", help="Download/output directory")] = Path("ec_train_output"),
-    resume_file: Annotated[Path | None, typer.Option("--resume-file", help="Resume from a prior session log")] = None,
-    headless: Annotated[bool, typer.Option("--headless/--no-headless", help="Headless mode for scraping")] = True,
-    force_new_session: Annotated[bool, typer.Option("--force-new-session", help="Ignore previous sessions")] = False,
-    bidtabs_path: Annotated[Path | None, typer.Option(help="Path to BidTabs export (CSV/Excel)")] = None,
+    output_dir: Annotated[
+        Path, typer.Option("--output-dir", "-o", help="Download/output directory")
+    ] = Path("ec_train_output"),
+    resume_file: Annotated[
+        Path | None, typer.Option("--resume-file", help="Resume from a prior session log")
+    ] = None,
+    headless: Annotated[
+        bool, typer.Option("--headless/--no-headless", help="Headless mode for scraping")
+    ] = True,
+    force_new_session: Annotated[
+        bool, typer.Option("--force-new-session", help="Ignore previous sessions")
+    ] = False,
+    bidtabs_path: Annotated[
+        Path | None, typer.Option(help="Path to BidTabs export (CSV/Excel)")
+    ] = None,
 ) -> None:
     """Run the EC Train pipeline end-to-end."""
     cfg = Config.from_env()
     bidtabs_source = bidtabs_path or cfg.bidtabs_path
     if not bidtabs_source:
-        raise typer.BadParameter("BidTabs path must be provided via --bidtabs-path or EC_TRAIN_BIDTABS_PATH.")
+        raise typer.BadParameter(
+            "BidTabs path must be provided via --bidtabs-path or EC_TRAIN_BIDTABS_PATH."
+        )
 
     session_log = SessionLog(output_dir / "ec_train_sessions.jsonl")
     seen_contracts = _load_seen(resume_file, session_log, force_new_session)
@@ -103,7 +115,7 @@ def run(
                     ],
                 )
                 for doc in downloads:
-                    content = extract_content(doc.path)
+                    extract_content(doc.path)
                     key_docs[doc.name] = doc.path.as_posix()
             else:
                 console.print(f"[yellow]Contract {contract.contract} not found in ERMS.[/yellow]")

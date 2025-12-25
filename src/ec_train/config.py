@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Iterable, Mapping, MutableMapping
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, Mapping, MutableMapping
-
 
 DEFAULT_ERMS_URL = "https://erms12c.indot.in.gov/viewdocs/Default.aspx"
 
@@ -25,12 +24,15 @@ class Config:
     cookies: MutableMapping[str, str] | None = None
 
     @classmethod
-    def from_env(cls, env: Mapping[str, str] | None = None) -> "Config":
+    def from_env(cls, env: Mapping[str, str] | None = None) -> Config:
         """Create a config instance from environment variables."""
         env = env or os.environ
         cost_checkout = cls._optional_path(env.get("EC_TRAIN_COST_CHECKOUT"))
         bidtabs = cls._optional_path(env.get("EC_TRAIN_BIDTABS_PATH"))
-        download_dir = cls._optional_path(env.get("EC_TRAIN_DOWNLOAD_DIR")) or Path.cwd() / "ec_train_downloads"
+        download_dir = (
+            cls._optional_path(env.get("EC_TRAIN_DOWNLOAD_DIR"))
+            or Path.cwd() / "ec_train_downloads"
+        )
         cookie_jar = cls._optional_path(env.get("EC_TRAIN_COOKIE_JAR"))
         username = env.get("EC_TRAIN_USERNAME")
         password = env.get("EC_TRAIN_PASSWORD")

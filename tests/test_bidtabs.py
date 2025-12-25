@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from ec_train.bidtabs import BidTabContract, PAY_ITEM_TARGET, scan_bidtabs, select_contracts
+from ec_train.bidtabs import PAY_ITEM_TARGET, BidTabContract, scan_bidtabs, select_contracts
 
 
 def test_scan_bidtabs_filters_pay_item(tmp_path: Path):

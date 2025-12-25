@@ -111,9 +111,7 @@ def build_attachment_summary(
         summary.update(_summarize_ec_quantities(ec_quantities[0], ec_quantities[1]))
     if plan_set_pdf:
         summary.update(
-            _summarize_plan_set_pdf(
-                plan_set_pdf[0], plan_set_pdf[1], plan_set_includes_ec_plans
-            )
+            _summarize_plan_set_pdf(plan_set_pdf[0], plan_set_pdf[1], plan_set_includes_ec_plans)
         )
     return summary
 

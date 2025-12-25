@@ -4,7 +4,7 @@ from pathlib import Path
 
 from openpyxl import load_workbook
 
-from ec_train.excel_writer import FeatureRow, HEADERS, write_workbook
+from ec_train.excel_writer import HEADERS, FeatureRow, write_workbook
 
 
 def test_write_workbook_formats_sheet(tmp_path: Path):

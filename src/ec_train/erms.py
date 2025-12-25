@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Iterable, Mapping, MutableMapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, Mapping, MutableMapping
 from urllib.parse import urljoin
 
 import requests
@@ -124,7 +124,9 @@ class ERMSFetcher:
             )
         return docs
 
-    def download_documents(self, docs: Iterable[DocumentLink], patterns: Iterable[str]) -> list[DocumentLink]:
+    def download_documents(
+        self, docs: Iterable[DocumentLink], patterns: Iterable[str]
+    ) -> list[DocumentLink]:
         """Download documents that match any of the provided patterns."""
         self.download_dir.mkdir(parents=True, exist_ok=True)
         selected: list[DocumentLink] = []
