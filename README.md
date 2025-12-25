@@ -251,6 +251,47 @@ ruff check src/ tests/
 ruff format src/ tests/
 ```
 
+## EC Train
+
+The `ec-train` module automates collecting erosion-control training data from INDOT BidTabs and ERMS.
+
+### Setup
+
+1. Clone or reference the CostEstimateGenerator repository and locate the BidTabs export (CSV/Excel).
+2. Export or identify a BidTabs file that includes the target pay item (default `205-12616`).
+3. Configure environment variables:
+   - `EC_TRAIN_BIDTABS_PATH`: Path to the BidTabs CSV/Excel.
+   - `EC_TRAIN_COST_CHECKOUT` (optional): Local checkout path for related assets.
+   - `EC_TRAIN_DOWNLOAD_DIR` (optional): Where downloads and workbooks are written.
+   - `EC_TRAIN_COOKIE_JAR` / `EC_TRAIN_COOKIES` (optional): Pre-authenticated cookies for ERMS.
+   - `EC_TRAIN_USERNAME` / `EC_TRAIN_PASSWORD` (optional): Credentials if authentication is needed.
+4. Install dependencies: `pip install -e .`
+
+### Usage
+
+```bash
+# Run end-to-end pipeline and download results
+ec-train run --count 3 --output-dir ./ec_train_output
+
+# Resume from an existing session log
+ec-train run --resume-file ./ec_train_output/ec_train_sessions.jsonl
+
+# Use a specific BidTabs file
+ec-train run --bidtabs-path /path/to/BidTabs.xlsx --headless --count 5
+```
+
+You can also invoke via module execution:
+
+```bash
+python -m ec_train run --count 2
+```
+
+### Behavior and Limitations
+
+- The pipeline filters BidTabs for contracts containing pay item `205-12616`, deduplicates by contract number, and avoids prior sessions unless `--force-new-session` is provided.
+- ERMS access may require valid cookies or credentials; CAPTCHA or login prompts will halt execution with an actionable warning.
+- Downloads are filtered using erosion-control keywords (erosion, control, drain, soil, 205-12616, silt, sediment, temporary, permanent, vegetation, mulch, blanket, permits, pay, plan).
+- Extracted findings are written to an Excel workbook (`YYYY-MM-DD_ec-train.xlsx`) with filters and hyperlinks to downloaded documents.
 ### Project Structure
 
 ```
