@@ -39,7 +39,12 @@ def _load_seen(resume_file: Path | None, session: SessionLog, force_new: bool) -
     return seen
 
 
-def _append_unique(target: list[str], seen: set[str], items: list[str], limit: int | None = None) -> None:
+def _append_unique(
+    target: list[str],
+    seen: set[str],
+    items: list[str],
+    limit: int | None = None,
+) -> None:
     for item in items:
         if item in seen:
             continue
@@ -192,7 +197,8 @@ def run(
 
     if len(selected) < count:
         console.print(
-            f"[yellow]Only {len(selected)} contracts had matching ERMS docs for processing.[/yellow]"
+            f"[yellow]Only {len(selected)} contracts had matching ERMS docs for processing."
+            "[/yellow]"
         )
 
     workbook_path = write_workbook(feature_rows, output_dir)

@@ -1,0 +1,39 @@
+name: Fetch BidTabsData
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.12"
+  BIDTABSDATA_VERSION: ${{ vars.BIDTABSDATA_VERSION || '' }}
+  BIDTABSDATA_REPO: ${{ vars.BIDTABSDATA_REPO || 'derek-betz/BidTabsData' }}
+  BIDTABSDATA_OUT_DIR: data-sample/BidTabsData
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Skip fetch (no version configured)
+        if: env.BIDTABSDATA_VERSION == ''
+        run: echo "BIDTABSDATA_VERSION is not set; skipping BidTabsData fetch."
+
+      - name: Fetch BidTabsData
+        if: env.BIDTABSDATA_VERSION != ''
+        run: python scripts/fetch_bidtabsdata.py

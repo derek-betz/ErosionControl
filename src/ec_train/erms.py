@@ -204,7 +204,7 @@ def _filename_from_response(resp: requests.Response) -> str | None:
     header = resp.headers.get("content-disposition")
     if not header:
         return None
-    match = re.search(r'filename=\"?([^\";]+)\"?', header, flags=re.IGNORECASE)
+    match = re.search(r"filename=\"?([^\";]+)\"?", header, flags=re.IGNORECASE)
     if match:
         return match.group(1)
     return None

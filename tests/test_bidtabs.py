@@ -47,5 +47,10 @@ def test_select_contracts_filters_by_job_size():
         BidTabContract(contract="B", job_size=5_000_000),
         BidTabContract(contract="C", job_size=None),
     ]
-    selected = select_contracts(candidates, count=5, min_job_size=2_000_000, max_job_size=10_000_000)
+    selected = select_contracts(
+        candidates,
+        count=5,
+        min_job_size=2_000_000,
+        max_job_size=10_000_000,
+    )
     assert [c.contract for c in selected] == ["B"]

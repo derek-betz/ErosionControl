@@ -26,6 +26,18 @@ pip install -e .
 pip install -e ".[llm]"
 ```
 
+### Download BidTabsData (optional for training samples)
+
+```bash
+export BIDTABSDATA_VERSION=<release-tag>
+python scripts/fetch_bidtabsdata.py
+```
+
+`BIDTABSDATA_VERSION` must match a GitHub Release tag in `derek-betz/BidTabsData` and will download
+`BidTabsData-${BIDTABSDATA_VERSION}.zip` into `data-sample/BidTabsData`
+(`.bidtabsdata_version` is written with the tag). Override the repository or output directory with
+`BIDTABSDATA_REPO` and `BIDTABSDATA_OUT_DIR` if needed.
+
 ## Basic Usage
 
 ### Validate a Project File

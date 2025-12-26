@@ -8,7 +8,17 @@ Get started with EC Agent in 5 minutes!
 pip install -e .
 ```
 
-## 2. Launch the Web UI (Optional)
+## 2. (Optional) Download BidTabsData Sample
+
+```bash
+export BIDTABSDATA_VERSION=<release-tag>
+python scripts/fetch_bidtabsdata.py
+```
+
+This pulls `BidTabsData-${BIDTABSDATA_VERSION}.zip` from GitHub Releases into
+`data-sample/BidTabsData`.
+
+## 3. Launch the Web UI (Optional)
 
 ```bash
 ec-agent web
@@ -16,19 +26,19 @@ ec-agent web
 
 Open `http://127.0.0.1:8000` in your browser.
 
-## 3. Launch the Desktop UI (Optional)
+## 4. Launch the Desktop UI (Optional)
 
 ```bash
 ec-agent desktop
 ```
 
-## 4. Validate an Example
+## 5. Validate an Example
 
 ```bash
 ec-agent validate examples/highway_project.yaml
 ```
 
-## 5. Process a Project
+## 6. Process a Project
 
 ```bash
 ec-agent process examples/highway_project.yaml
@@ -51,13 +61,13 @@ Generated: 2024-01-15T10:30:00
 └───────────────────────────┴────────┘
 ```
 
-## 6. Save Results
+## 7. Save Results
 
 ```bash
 ec-agent process examples/highway_project.yaml --output my_results.yaml
 ```
 
-## 7. Create Your Own Project
+## 8. Create Your Own Project
 
 Create `my_project.yaml`:
 

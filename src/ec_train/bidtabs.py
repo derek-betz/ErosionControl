@@ -40,7 +40,10 @@ def scan_bidtabs(path: Path, pay_item: str = PAY_ITEM_TARGET) -> list[BidTabCont
         or columns_lower.get("projectid")
         or columns_lower.get("project id")
         or next((col for col in df.columns if "contract" in col.lower()), None)
-        or next((col for col in df.columns if "project" in col.lower() and "id" in col.lower()), None)
+        or next(
+            (col for col in df.columns if "project" in col.lower() and "id" in col.lower()),
+            None,
+        )
     )
     item_col = next((col for col in df.columns if "item" in col.lower()), None)
     desc_col = next((col for col in df.columns if "description" in col.lower()), None)
@@ -61,7 +64,10 @@ def scan_bidtabs(path: Path, pay_item: str = PAY_ITEM_TARGET) -> list[BidTabCont
             (col for col in df.columns if "contract" in col.lower() and "amount" in col.lower()),
             None,
         )
-        or next((col for col in df.columns if "total" in col.lower() and "bid" in col.lower()), None)
+        or next(
+            (col for col in df.columns if "total" in col.lower() and "bid" in col.lower()),
+            None,
+        )
     )
 
     if contract_col is None or item_col is None:
@@ -121,7 +127,11 @@ def select_contracts(
 ) -> list[BidTabContract]:
     """Select contracts, skipping any already seen."""
     seen = {c.strip() for c in (seen_contracts or []) if c}
-    pool = [c for c in candidates if c.contract not in seen and _in_job_size_range(c, min_job_size, max_job_size)]
+    pool = [
+        c
+        for c in candidates
+        if c.contract not in seen and _in_job_size_range(c, min_job_size, max_job_size)
+    ]
     if shuffle:
         pool = pool.copy()
         random.shuffle(pool)
