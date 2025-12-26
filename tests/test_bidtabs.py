@@ -54,3 +54,16 @@ def test_select_contracts_filters_by_job_size():
         max_job_size=10_000_000,
     )
     assert [c.contract for c in selected] == ["B"]
+
+
+def test_cloud_sample_has_minimum_contracts():
+    sample_path = (
+        Path(__file__).resolve().parent.parent
+        / "src"
+        / "ec_train"
+        / "data"
+        / "bidtabs_cloud_sample.csv"
+    )
+    contracts = scan_bidtabs(sample_path)
+    assert len(contracts) >= 10
+    assert len({c.contract for c in contracts}) >= 10
