@@ -50,12 +50,15 @@ def _first_directory(paths: Iterable[Path]) -> Path | None:
 def _extract_zip(zip_path: Path, extract_to: Path) -> Path:
     extract_to.mkdir(parents=True, exist_ok=True)
     base = extract_to.resolve()
-    with zipfile.ZipFile(zip_path) as archive:
-        for member in archive.infolist():
-            destination = (base / member.filename).resolve()
-            if not destination.is_relative_to(base):
-                raise SystemExit(f"Unsafe path in archive: {member.filename}")
-            archive.extract(member, path=extract_to)
+    try:
+        with zipfile.ZipFile(zip_path) as archive:
+            for member in archive.infolist():
+                destination = (base / member.filename).resolve()
+                if not destination.is_relative_to(base):
+                    raise SystemExit(f"Unsafe path in archive: {member.filename}")
+                archive.extract(member, path=extract_to)
+    except zipfile.BadZipFile as exc:
+        raise SystemExit(f"Invalid BidTabsData archive: {exc}") from exc
     entries = [p for p in extract_to.iterdir() if not p.name.startswith(MACOSX_METADATA_DIR)]
     if len(entries) == 1 and entries[0].is_dir():
         return entries[0]
@@ -96,9 +99,8 @@ def fetch_bidtabsdata() -> Path:
         _download_asset(download_url, zip_path)
 
         extracted_root = _extract_zip(zip_path, Path(tmpdir) / "extracted")
+        (extracted_root / VERSION_FILENAME).write_text(version, encoding="utf-8")
         _atomic_replace(extracted_root, out_dir)
-        version_file = out_dir / VERSION_FILENAME
-        version_file.write_text(version, encoding="utf-8")
         return out_dir
 
 
