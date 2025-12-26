@@ -7,8 +7,8 @@ import shutil
 import sys
 import tempfile
 import zipfile
-from collections.abc import Iterable
 from pathlib import Path
+from typing import Iterable  # noqa: UP035
 
 import requests
 
@@ -60,8 +60,12 @@ def _extract_zip(zip_path: Path, extract_to: Path) -> Path:
     except zipfile.BadZipFile as exc:
         raise SystemExit(f"Invalid BidTabsData archive: {exc}") from exc
     entries = [p for p in extract_to.iterdir() if not p.name.startswith(MACOSX_METADATA_DIR)]
-    if len(entries) == 1 and entries[0].is_dir():
-        return entries[0]
+    directories = [p for p in entries if p.is_dir()]
+    if len(directories) == 1:
+        return directories[0]
+    preferred = next((p for p in directories if "BidTabsData" in p.name), None)
+    if preferred:
+        return preferred
     directory = _first_directory(entries)
     return directory or extract_to
 
