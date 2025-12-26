@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import importlib.util
+import sys
 import zipfile
 from pathlib import Path
 
-MODULE_PATH = Path(__file__).resolve().parent.parent / "scripts" / "fetch_bidtabsdata.py"
-spec = importlib.util.spec_from_file_location("fetch_bidtabsdata", MODULE_PATH)
-fetch = importlib.util.module_from_spec(spec)
-assert spec and spec.loader
-spec.loader.exec_module(fetch)
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts import fetch_bidtabsdata as fetch  # noqa: E402
 
 
 class DummyResponse:

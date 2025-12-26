@@ -12,6 +12,7 @@ from pathlib import Path
 
 import requests
 
+MACOSX_METADATA_DIR = "__MACOSX"
 DEFAULT_REPO = "derek-betz/BidTabsData"
 DEFAULT_OUT_DIR = Path("data-sample/BidTabsData")
 VERSION_FILENAME = ".bidtabsdata_version"
@@ -27,16 +28,16 @@ def _require_env(name: str) -> str:
 
 
 def _download_asset(url: str, dest: Path) -> None:
-    with requests.get(url, stream=True, timeout=60) as response:
-        try:
+    try:
+        with requests.get(url, stream=True, timeout=60) as response:
             response.raise_for_status()
-        except requests.HTTPError as exc:
-            raise SystemExit(f"Failed to download asset: {exc}") from exc
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        with dest.open("wb") as fh:
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:
-                    fh.write(chunk)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            with dest.open("wb") as fh:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        fh.write(chunk)
+    except requests.RequestException as exc:
+        raise SystemExit(f"Failed to download asset: {exc}") from exc
 
 
 def _first_directory(paths: Iterable[Path]) -> Path | None:
@@ -55,7 +56,7 @@ def _extract_zip(zip_path: Path, extract_to: Path) -> Path:
             if not destination.is_relative_to(base):
                 raise SystemExit(f"Unsafe path in archive: {member.filename}")
             archive.extract(member, path=extract_to)
-    entries = [p for p in extract_to.iterdir() if not p.name.startswith("__MACOSX")]
+    entries = [p for p in extract_to.iterdir() if not p.name.startswith(MACOSX_METADATA_DIR)]
     if len(entries) == 1 and entries[0].is_dir():
         return entries[0]
     directory = _first_directory(entries)
