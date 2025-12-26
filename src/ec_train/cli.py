@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from importlib import resources
 from pathlib import Path
 from typing import Annotated
 
@@ -20,6 +21,25 @@ from .session import SessionLog
 
 app = typer.Typer(name="ec-train", add_completion=False)
 console = Console()
+
+
+def _default_bidtabs_path() -> Path | None:
+    candidates = [
+        Path.cwd() / "src" / "ec_train" / "data" / "bidtabs_cloud_sample.csv",
+        Path.cwd() / "ec_train_output" / "bidtabs_cloud_sample.csv",
+        Path(__file__).resolve().parent / "data" / "bidtabs_cloud_sample.csv",
+    ]
+    for path in candidates:
+        if path.exists():
+            return path
+    try:
+        data_resource = resources.files("ec_train").joinpath("data/bidtabs_cloud_sample.csv")
+        with resources.as_file(data_resource) as res_path:
+            if res_path.exists():
+                return res_path
+    except (ModuleNotFoundError, FileNotFoundError, AttributeError):
+        return None
+    return None
 
 
 def _load_seen(resume_file: Path | None, session: SessionLog, force_new: bool) -> set[str]:
@@ -87,10 +107,12 @@ def run(
 ) -> None:
     """Run the EC Train pipeline end-to-end."""
     cfg = Config.from_env()
-    bidtabs_source = bidtabs_path or cfg.bidtabs_path
+    default_bidtabs_path = _default_bidtabs_path()
+    bidtabs_source = bidtabs_path or cfg.bidtabs_path or default_bidtabs_path
     if not bidtabs_source:
         raise typer.BadParameter(
-            "BidTabs path must be provided via --bidtabs-path or EC_TRAIN_BIDTABS_PATH."
+            "BidTabs path must be provided via --bidtabs-path or EC_TRAIN_BIDTABS_PATH "
+            "(the bundled sample file was not found)."
         )
 
     session_log = SessionLog(output_dir / "ec_train_sessions.jsonl")

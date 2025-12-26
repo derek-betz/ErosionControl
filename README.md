@@ -304,6 +304,23 @@ You can also invoke via module execution:
 python -m ec_train run --count 2
 ```
 
+### Cloud quick run (10 random unique contracts)
+
+- Uses the bundled BidTabs sample at `src/ec_train/data/bidtabs_cloud_sample.csv`
+- Always requests 10 random unseen contracts (session log ignored)
+- Works headless; optional cookies/credentials come from `EC_TRAIN_*` env vars
+- Outputs to `ec_train_output/cloud_run` by default (override with `EC_TRAIN_OUTPUT_DIR`)
+
+```bash
+# Default cloud helper (overrides EC_TRAIN_BIDTABS_PATH unless you set it)
+bash scripts/run_ec_train_cloud.sh
+
+# Customize (e.g., different output dir)
+EC_TRAIN_OUTPUT_DIR=/tmp/ec_train \
+  EC_TRAIN_COOKIE_JAR=/tmp/erms.cookies \
+  bash scripts/run_ec_train_cloud.sh
+```
+
 ### Behavior and Limitations
 
 - The pipeline filters BidTabs for contracts containing pay item `205-12616`, deduplicates by contract number, and avoids prior sessions unless `--force-new-session` is provided.
