@@ -11,7 +11,7 @@ from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
 
-from .bidtabs import scan_bidtabs, select_contracts
+from .bidtabs import BidTabContract, scan_bidtabs, select_contracts
 from .config import Config
 from .erms import ERMSFetcher
 from .excel_writer import FeatureRow, write_workbook
@@ -37,6 +37,16 @@ def _load_seen(resume_file: Path | None, session: SessionLog, force_new: bool) -
     if not force_new:
         seen |= session.load()
     return seen
+
+
+def _append_unique(target: list[str], seen: set[str], items: list[str], limit: int | None = None) -> None:
+    for item in items:
+        if item in seen:
+            continue
+        target.append(item)
+        seen.add(item)
+        if limit is not None and len(target) >= limit:
+            return
 
 
 @app.command()
@@ -83,15 +93,15 @@ def run(
 
     console.print(f"[cyan]Scanning BidTabs from {bidtabs_source}[/cyan]")
     contracts = scan_bidtabs(Path(bidtabs_source))
-    selected = select_contracts(
+    candidates = select_contracts(
         contracts,
-        count=count,
+        count=len(contracts),
         seen_contracts=seen_contracts,
         min_job_size=min_job_size,
         max_job_size=max_job_size,
         shuffle=True,
     )
-    if not selected:
+    if not candidates:
         console.print("[yellow]No new contracts available.[/yellow]")
         raise typer.Exit(code=0)
 
@@ -106,11 +116,18 @@ def run(
     )
 
     feature_rows: list[FeatureRow] = []
+    selected: list[BidTabContract] = []
     with Progress() as progress:
-        task = progress.add_task("Processing contracts", total=len(selected))
-        for contract in selected:
+        task = progress.add_task("Processing contracts", total=count)
+        for contract in candidates:
+            if len(selected) >= count:
+                break
             folder_url = fetcher.search_contract(contract.contract)
             key_docs = {}
+            extracted_findings: list[str] = []
+            extracted_refs: list[str] = []
+            findings_seen: set[str] = set()
+            refs_seen: set[str] = set()
             if folder_url:
                 docs = fetcher.list_documents(folder_url)
                 downloads = fetcher.download_documents(
@@ -135,10 +152,27 @@ def run(
                 )
                 for doc in downloads:
                     if extract:
-                        extract_content(doc.path)
+                        extracted = extract_content(doc.path)
+                        _append_unique(extracted_refs, refs_seen, extracted.spec_refs)
+                        doc_findings = [f"{doc.name}: {finding}" for finding in extracted.findings]
+                        _append_unique(extracted_findings, findings_seen, doc_findings, limit=40)
                     key_docs[doc.name] = doc.path.as_posix()
+                if not key_docs:
+                    console.print(
+                        f"[yellow]Contract {contract.contract} has no matching ERMS docs.[/yellow]"
+                    )
+                    continue
             else:
                 console.print(f"[yellow]Contract {contract.contract} not found in ERMS.[/yellow]")
+                continue
+
+            spec_refs_text = "; ".join(extracted_refs) if extracted_refs else None
+            notes_parts: list[str] = []
+            if key_docs:
+                notes_parts.append(f"Docs: {'; '.join(list(key_docs.keys()))}")
+            if extracted_findings:
+                notes_parts.append(f"Findings: {' | '.join(extracted_findings)}")
+            notes_text = " | ".join(notes_parts) if notes_parts else None
 
             feature_rows.append(
                 FeatureRow(
@@ -148,11 +182,18 @@ def run(
                     route=contract.route,
                     bidtabs_qty=contract.bidtabs_qty,
                     key_docs=key_docs,
-                    notes="; ".join(list(key_docs.keys())),
+                    spec_refs=spec_refs_text,
+                    notes=notes_text,
                     source_url=folder_url or cfg.erms_url,
                 )
             )
+            selected.append(contract)
             progress.advance(task)
+
+    if len(selected) < count:
+        console.print(
+            f"[yellow]Only {len(selected)} contracts had matching ERMS docs for processing.[/yellow]"
+        )
 
     workbook_path = write_workbook(feature_rows, output_dir)
     session_log.append([c.contract for c in selected])
