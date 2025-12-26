@@ -267,6 +267,24 @@ The `ec-train` module automates collecting erosion-control training data from IN
    - `EC_TRAIN_USERNAME` / `EC_TRAIN_PASSWORD` (optional): Credentials if authentication is needed.
 4. Install dependencies: `pip install -e .`
 
+### Download BidTabsData from Releases
+
+Use the provided script to pull the centralized BidTabsData release asset.
+
+```bash
+export BIDTABSDATA_VERSION=<release-tag>  # required, e.g., v0.1.0
+# Optional overrides:
+# BIDTABSDATA_REPO=derek-betz/BidTabsData
+# BIDTABSDATA_OUT_DIR=data-sample/BidTabsData
+python scripts/fetch_bidtabsdata.py
+```
+
+The script downloads `BidTabsData-${BIDTABSDATA_VERSION}.zip` from the specified GitHub
+repository, replaces the target directory atomically, and writes
+`data-sample/BidTabsData/.bidtabsdata_version` with the fetched tag. In CI, set the
+`BIDTABSDATA_VERSION` repository variable so `.github/workflows/fetch-bidtabsdata.yml` can fetch
+the asset automatically on pushes and pull requests.
+
 ### Usage
 
 ```bash

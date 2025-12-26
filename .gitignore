@@ -76,3 +76,7 @@ dmypy.json
 
 # pytype
 .pytype/
+
+# BidTabsData artifacts
+data-sample/BidTabsData/
+data-sample/BidTabsData/.bidtabsdata_version
