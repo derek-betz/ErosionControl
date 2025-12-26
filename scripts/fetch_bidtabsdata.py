@@ -48,8 +48,13 @@ def _first_directory(paths: Iterable[Path]) -> Path | None:
 
 def _extract_zip(zip_path: Path, extract_to: Path) -> Path:
     extract_to.mkdir(parents=True, exist_ok=True)
+    base = extract_to.resolve()
     with zipfile.ZipFile(zip_path) as archive:
-        archive.extractall(extract_to)
+        for member in archive.infolist():
+            destination = (base / member.filename).resolve()
+            if not destination.is_relative_to(base):
+                raise SystemExit(f"Unsafe path in archive: {member.filename}")
+            archive.extract(member, path=extract_to)
     entries = [p for p in extract_to.iterdir() if not p.name.startswith("__MACOSX")]
     if len(entries) == 1 and entries[0].is_dir():
         return entries[0]
@@ -60,22 +65,21 @@ def _extract_zip(zip_path: Path, extract_to: Path) -> Path:
 def _atomic_replace(src_dir: Path, dest_dir: Path) -> None:
     dest_dir = dest_dir.resolve()
     dest_dir.parent.mkdir(parents=True, exist_ok=True)
-    staging_parent = tempfile.mkdtemp(dir=dest_dir.parent)
-    staging_path = Path(staging_parent) / dest_dir.name
-    shutil.copytree(src_dir, staging_path)
+    with tempfile.TemporaryDirectory(dir=dest_dir.parent) as staging_parent:
+        staging_path = Path(staging_parent) / dest_dir.name
+        shutil.copytree(src_dir, staging_path)
 
-    backup = dest_dir.parent / f".{dest_dir.name}.bak"
-    if backup.exists():
-        shutil.rmtree(backup)
+        backup = dest_dir.parent / f".{dest_dir.name}.bak"
+        if backup.exists():
+            shutil.rmtree(backup)
 
-    backup_created = False
-    if dest_dir.exists():
-        dest_dir.rename(backup)
-        backup_created = True
-    staging_path.replace(dest_dir)
-    if backup_created and backup.exists():
-        shutil.rmtree(backup)
-    shutil.rmtree(staging_parent, ignore_errors=True)
+        backup_created = False
+        if dest_dir.exists():
+            dest_dir.rename(backup)
+            backup_created = True
+        staging_path.replace(dest_dir)
+        if backup_created and backup.exists():
+            shutil.rmtree(backup)
 
 
 def fetch_bidtabsdata() -> Path:
