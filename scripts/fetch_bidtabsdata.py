@@ -68,10 +68,13 @@ def _atomic_replace(src_dir: Path, dest_dir: Path) -> None:
     if backup.exists():
         shutil.rmtree(backup)
 
+    backup_created = False
     if dest_dir.exists():
         dest_dir.rename(backup)
+        backup_created = True
     staging_path.replace(dest_dir)
-    shutil.rmtree(backup, ignore_errors=True)
+    if backup_created and backup.exists():
+        shutil.rmtree(backup)
     shutil.rmtree(staging_parent, ignore_errors=True)
 
 
