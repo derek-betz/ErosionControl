@@ -265,10 +265,13 @@ The `ec-train` module automates collecting erosion-control training data from IN
 3. Configure environment variables:
    - `EC_TRAIN_BIDTABS_PATH`: Path to the BidTabs CSV/Excel.
    - `EC_TRAIN_COST_CHECKOUT` (optional): Local checkout path for related assets.
-   - `EC_TRAIN_DOWNLOAD_DIR` (optional): Where downloads and workbooks are written.
+   - `EC_TRAIN_DOWNLOAD_DIR` (optional): Where downloads and workbooks are written (default: `ec_train_output`).
    - `EC_TRAIN_COOKIE_JAR` / `EC_TRAIN_COOKIES` (optional): Pre-authenticated cookies for ERMS.
    - `EC_TRAIN_USERNAME` / `EC_TRAIN_PASSWORD` (optional): Credentials if authentication is needed.
 4. Install dependencies: `pip install -e .`
+
+Notes:
+- `.xls` BidTabs files are supported via `xlrd`; `.xlsx` is preferred.
 
 ### Download BidTabsData from Releases
 
@@ -313,6 +316,12 @@ You can also invoke via module execution:
 
 ```bash
 python -m ec_train run --count 2
+```
+
+Or use the cloud-friendly preflight wrapper:
+
+```bash
+python scripts/run_ec_train_cloud.py --count 2
 ```
 
 ### Behavior and Limitations

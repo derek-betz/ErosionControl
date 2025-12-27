@@ -25,8 +25,11 @@ class BidTabContract:
 
 
 def _load_bidtabs(path: Path) -> pd.DataFrame:
-    if path.suffix.lower() in {".xlsx", ".xls"}:
-        return pd.read_excel(path)
+    suffix = path.suffix.lower()
+    if suffix == ".xls":
+        return pd.read_excel(path, engine="xlrd")
+    if suffix in {".xlsx", ".xlsm"}:
+        return pd.read_excel(path, engine="openpyxl")
     return pd.read_csv(path)
 
 

@@ -17,7 +17,7 @@ class Config:
     cost_estimate_checkout: Path | None = None
     bidtabs_path: Path | None = None
     erms_url: str = DEFAULT_ERMS_URL
-    download_dir: Path = field(default_factory=lambda: Path.cwd() / "ec_train_downloads")
+    download_dir: Path = field(default_factory=lambda: Path("ec_train_output"))
     cookie_jar: Path | None = None
     username: str | None = None
     password: str | None = None
@@ -29,9 +29,8 @@ class Config:
         env = env or os.environ
         cost_checkout = cls._optional_path(env.get("EC_TRAIN_COST_CHECKOUT"))
         bidtabs = cls._optional_path(env.get("EC_TRAIN_BIDTABS_PATH"))
-        download_dir = (
-            cls._optional_path(env.get("EC_TRAIN_DOWNLOAD_DIR"))
-            or Path.cwd() / "ec_train_downloads"
+        download_dir = cls._optional_path(env.get("EC_TRAIN_DOWNLOAD_DIR")) or Path(
+            "ec_train_output"
         )
         cookie_jar = cls._optional_path(env.get("EC_TRAIN_COOKIE_JAR"))
         username = env.get("EC_TRAIN_USERNAME")

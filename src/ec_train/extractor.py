@@ -47,10 +47,13 @@ def extract_text_from_docx(path: Path) -> str:
 
 def extract_content(path: Path) -> ExtractedContent:
     """Extract relevant snippets and references from a document."""
-    if path.suffix.lower() == ".pdf":
+    suffix = path.suffix.lower()
+    if suffix == ".pdf":
         text = extract_text_from_pdf(path)
-    elif path.suffix.lower() in {".doc", ".docx"}:
+    elif suffix == ".docx":
         text = extract_text_from_docx(path)
+    elif suffix == ".doc":
+        text = ""
     else:
         text = path.read_text(encoding="utf-8", errors="ignore")
 

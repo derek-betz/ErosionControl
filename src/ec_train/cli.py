@@ -58,8 +58,8 @@ def _append_unique(
 def run(
     count: Annotated[int, typer.Option("--count", "-n", help="Number of contracts to process")] = 3,
     output_dir: Annotated[
-        Path, typer.Option("--output-dir", "-o", help="Download/output directory")
-    ] = Path("ec_train_output"),
+        Path | None, typer.Option("--output-dir", "-o", help="Download/output directory")
+    ] = None,
     resume_file: Annotated[
         Path | None, typer.Option("--resume-file", help="Resume from a prior session log")
     ] = None,
@@ -87,6 +87,7 @@ def run(
 ) -> None:
     """Run the EC Train pipeline end-to-end."""
     cfg = Config.from_env()
+    output_dir = output_dir or cfg.download_dir
     bidtabs_source = bidtabs_path or cfg.bidtabs_path
     if not bidtabs_source:
         raise typer.BadParameter(
