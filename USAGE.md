@@ -20,6 +20,10 @@ This guide provides detailed examples and usage scenarios for the EC Agent.
 # Install from source
 git clone https://github.com/derek-betz/ErosionControl.git
 cd ErosionControl
+
+# Windows bootstrap (installs Python, dev deps, and runs tests)
+powershell -ExecutionPolicy Bypass -File scripts/bootstrap.ps1
+
 pip install -e .
 
 # Or with LLM support
@@ -30,6 +34,13 @@ pip install -e ".[llm]"
 
 ```bash
 export BIDTABSDATA_VERSION=<release-tag>
+# Optional overrides:
+# BIDTABSDATA_REPO=derek-betz/BidTabsData
+# BIDTABSDATA_HOST=github.company.com
+# BIDTABSDATA_OUT_DIR=data-sample/BidTabsData
+# BIDTABSDATA_URL=https://artifacts.company.com/BidTabsData-v0.1.0.zip
+# BIDTABSDATA_ARCHIVE=\\server\share\BidTabsData-v0.1.0.zip
+# BIDTABSDATA_CACHE_DIR=~/.cache/ec-agent/bidtabsdata
 python scripts/fetch_bidtabsdata.py
 ```
 
@@ -37,6 +48,9 @@ python scripts/fetch_bidtabsdata.py
 `BidTabsData-${BIDTABSDATA_VERSION}.zip` into `data-sample/BidTabsData`
 (`.bidtabsdata_version` is written with the tag). Override the repository or output directory with
 `BIDTABSDATA_REPO` and `BIDTABSDATA_OUT_DIR` if needed.
+If GitHub access is restricted, set `BIDTABSDATA_URL` to a reachable mirror or
+`BIDTABSDATA_ARCHIVE` to a local zip. When `BIDTABSDATA_VERSION` is omitted, the script will infer
+it from a `BidTabsData-<version>.zip` filename.
 
 ## Basic Usage
 

@@ -33,6 +33,9 @@
 git clone https://github.com/derek-betz/ErosionControl.git
 cd ErosionControl
 
+# Windows bootstrap (installs Python, dev deps, and runs tests)
+powershell -ExecutionPolicy Bypass -File scripts/bootstrap.ps1
+
 # Install in development mode
 pip install -e .
 
@@ -238,11 +241,11 @@ ec-agent version
 # Install development dependencies
 pip install -e ".[dev]"
 
-# Run tests
-pytest
+# Run tests (auto-installs dev deps if missing)
+python scripts/run_tests.py
 
 # Run tests with coverage
-pytest --cov=ec_agent --cov-report=html
+python scripts/run_tests.py --cov=ec_agent --cov-report=html
 
 # Run linter
 ruff check src/ tests/
@@ -275,7 +278,11 @@ Use the provided script to pull the centralized BidTabsData release asset.
 export BIDTABSDATA_VERSION=<release-tag>  # required, e.g., v0.1.0
 # Optional overrides:
 # BIDTABSDATA_REPO=derek-betz/BidTabsData
+# BIDTABSDATA_HOST=github.company.com
 # BIDTABSDATA_OUT_DIR=data-sample/BidTabsData
+# BIDTABSDATA_URL=https://artifacts.company.com/BidTabsData-v0.1.0.zip
+# BIDTABSDATA_ARCHIVE=\\server\share\BidTabsData-v0.1.0.zip
+# BIDTABSDATA_CACHE_DIR=~/.cache/ec-agent/bidtabsdata
 python scripts/fetch_bidtabsdata.py
 ```
 
@@ -284,6 +291,10 @@ repository, replaces the target directory atomically, and writes
 `data-sample/BidTabsData/.bidtabsdata_version` with the fetched tag. In CI, set the
 `BIDTABSDATA_VERSION` repository variable so `.github/workflows/fetch-bidtabsdata.yml` can fetch
 the asset automatically on pushes and pull requests.
+
+If GitHub access is restricted, set `BIDTABSDATA_URL` to a reachable mirror or
+`BIDTABSDATA_ARCHIVE` to a local zip. When `BIDTABSDATA_VERSION` is omitted, the script will
+infer it from a `BidTabsData-<version>.zip` filename.
 
 ### Usage
 

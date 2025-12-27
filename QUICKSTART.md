@@ -5,6 +5,9 @@ Get started with EC Agent in 5 minutes!
 ## 1. Install
 
 ```bash
+# Windows bootstrap (installs Python, dev deps, and runs tests)
+powershell -ExecutionPolicy Bypass -File scripts/bootstrap.ps1
+
 pip install -e .
 ```
 
@@ -12,11 +15,15 @@ pip install -e .
 
 ```bash
 export BIDTABSDATA_VERSION=<release-tag>
+# Optional overrides:
+# BIDTABSDATA_URL=https://artifacts.company.com/BidTabsData-v0.1.0.zip
+# BIDTABSDATA_ARCHIVE=\\server\share\BidTabsData-v0.1.0.zip
 python scripts/fetch_bidtabsdata.py
 ```
 
 This pulls `BidTabsData-${BIDTABSDATA_VERSION}.zip` from GitHub Releases into
 `data-sample/BidTabsData`.
+If GitHub access is restricted, set `BIDTABSDATA_URL` or `BIDTABSDATA_ARCHIVE` instead.
 
 ## 3. Launch the Web UI (Optional)
 

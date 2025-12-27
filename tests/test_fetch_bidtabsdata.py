@@ -62,3 +62,46 @@ def test_fetch_bidtabsdata_writes_version_and_content(monkeypatch, tmp_path: Pat
         captured["url"]
         == "https://github.com/example/BidTabsData/releases/download/v0.0.0/BidTabsData-v0.0.0.zip"
     )
+
+
+def test_fetch_bidtabsdata_uses_archive_override(monkeypatch, tmp_path: Path):
+    zip_path = tmp_path / "BidTabsData-v1.2.3.zip"
+    _build_zip(zip_path)
+
+    def fail_get(url: str, stream: bool = True, timeout: int = 60):
+        raise AssertionError("Network fetch should not be called when using an archive override.")
+
+    monkeypatch.setenv("BIDTABSDATA_VERSION", "v1.2.3")
+    monkeypatch.setenv("BIDTABSDATA_ARCHIVE", str(zip_path))
+    out_dir = tmp_path / "downloaded"
+    monkeypatch.setenv("BIDTABSDATA_OUT_DIR", str(out_dir))
+    monkeypatch.setattr(fetch.requests, "get", fail_get)
+
+    dest = fetch.fetch_bidtabsdata()
+
+    assert dest == out_dir
+    assert (dest / "sample.txt").read_text() == "hello"
+    assert (dest / fetch.VERSION_FILENAME).read_text() == "v1.2.3"
+
+
+def test_fetch_bidtabsdata_infers_version_from_url(monkeypatch, tmp_path: Path):
+    zip_path = tmp_path / "BidTabsData-v9.9.9.zip"
+    _build_zip(zip_path)
+
+    captured = {}
+
+    def fake_get(url: str, stream: bool = True, timeout: int = 60):
+        captured["url"] = url
+        return DummyResponse(zip_path)
+
+    monkeypatch.delenv("BIDTABSDATA_VERSION", raising=False)
+    monkeypatch.setenv("BIDTABSDATA_URL", "https://example.com/BidTabsData-v9.9.9.zip")
+    out_dir = tmp_path / "downloaded"
+    monkeypatch.setenv("BIDTABSDATA_OUT_DIR", str(out_dir))
+    monkeypatch.setattr(fetch.requests, "get", fake_get)
+
+    dest = fetch.fetch_bidtabsdata()
+
+    assert dest == out_dir
+    assert (dest / fetch.VERSION_FILENAME).read_text() == "v9.9.9"
+    assert captured["url"] == "https://example.com/BidTabsData-v9.9.9.zip"
