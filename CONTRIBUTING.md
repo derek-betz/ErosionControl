@@ -15,11 +15,14 @@ Thank you for your interest in contributing to EC Agent! This document provides 
 # Install the package in editable mode with dev dependencies
 pip install -e ".[dev]"
 
-# Run tests
-pytest
+# Windows bootstrap (installs Python, dev deps, and runs tests)
+powershell -ExecutionPolicy Bypass -File scripts/bootstrap.ps1
+
+# Run tests (auto-installs dev deps if missing)
+python scripts/run_tests.py
 
 # Run tests with coverage
-pytest --cov=ec_agent --cov-report=html
+python scripts/run_tests.py --cov=ec_agent --cov-report=html
 
 # Run linter
 ruff check src/ tests/
